@@ -10,13 +10,14 @@
       "until": "2026-08-12",
       "untilNote": "до начала технических работ 12 августа 2026",
       "items": [],
-      "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/godaud/news/26/16/ROCKYOURBODY_1.png",
+      "image": "assets/promo/ROCKYOURBODY.png",
       "note": "Все предметы из набора наследуемые.",
       "sourceUrl": "https://lostark.ru/news/2620-obnovlenie-letniy-triumf-uzhe-v-igre",
       "sourceTitle": "Обновление «Летний триумф» уже в игре!",
       "sourceDate": "2026-07-15",
       "auto": true,
-      "found": "2026-11-20T06:58:48+00:00"
+      "found": "2026-11-20T06:58:48+00:00",
+      "imageOrig": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/godaud/news/26/16/ROCKYOURBODY_1.png"
     },
     {
       "code": "LEGENDSNEVERDIE",

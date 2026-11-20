@@ -19,7 +19,10 @@ async function copy(text) {
   }
 }
 
-const RAW = 'https://raw.githubusercontent.com/xSlowly343/LA-mokoko/main/data/promocodes.json';
+const REPO_RAW = 'https://raw.githubusercontent.com/xSlowly343/LA-mokoko/main/';
+const RAW = REPO_RAW + 'data/promocodes.json';
+// картинки, сохранённые ботом, берём из репозитория (видны сразу), запасной путь — копия на сайте
+const imgSrc = (p) => (p && p.startsWith('assets/') ? REPO_RAW + p : p);
 let cache = null, cacheAt = 0;
 // как и новости: свежая версия прямо из репозитория, запасной вариант — локальный файл
 async function getPromos() {
@@ -68,7 +71,7 @@ export async function renderPromo(page) {
           ${c.check ? '<p class="pc-check">⚠ Часть данных не удалось прочитать автоматически — проверьте в новости на lostark.ru.</p>' : ''}
           ${!c.items?.length ? '' : ''}
           ${c.items?.length ? `<ul class="rw pc-items">${c.items.map((it) => `<li>${rewardIcon(it)}<span>${esc(it)}</span></li>`).join('')}</ul>` : ''}
-          ${c.image ? `<a class="pc-img" href="${esc(c.image)}" target="_blank" rel="noopener" title="Состав набора — открыть крупно"><img src="${esc(c.image)}" alt="Состав набора ${esc(c.code)}" loading="lazy"><span>Состав набора · нажмите, чтобы увеличить</span></a>` : ''}
+          ${c.image ? `<a class="pc-img" href="${esc(imgSrc(c.image))}" target="_blank" rel="noopener" title="Состав набора — открыть крупно"><img src="${esc(imgSrc(c.image))}" data-fallback="${esc(c.imageOrig || c.image)}" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}" alt="Состав набора ${esc(c.code)}" loading="lazy"><span>Состав набора · нажмите, чтобы увеличить</span></a>` : ''}
           <div class="pc-actions">
             ${live ? `<a class="btn sm" href="${esc(data.activateUrl)}?code=${encodeURIComponent(c.code)}" target="_blank" rel="noopener">Активировать этот код ↗</a>` : ''}
             ${src ? `<a class="m-src" href="${esc(src.url)}" target="_blank" rel="noopener">ⓘ ${esc(src.title)} · ${fmtDate(src.date)}</a>` : ''}

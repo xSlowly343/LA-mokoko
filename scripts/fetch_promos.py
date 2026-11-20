@@ -19,6 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 NEWS = ROOT / "data" / "news.json"
 PROMO = ROOT / "data" / "promocodes.json"
+IMG_DIR = ROOT / "assets" / "promo"
 UA = "Mozilla/5.0 (compatible; MokokoTrailNewsBot/1.0; fan site news digest)"
 MONTHS = {"января": 1, "февраля": 2, "марта": 3, "апреля": 4, "мая": 5, "июня": 6, "июля": 7,
           "августа": 8, "сентября": 9, "октября": 10, "ноября": 11, "декабря": 12}
@@ -40,6 +41,23 @@ def get(url: str, tries: int = 3) -> str:
             if i == tries - 1:
                 raise
             time.sleep(3 * (i + 1))
+
+
+def save_image(url: str, code: str):
+    """Сохраняет картинку набора в репозиторий — чтобы не зависеть от чужого сервера."""
+    ext = (re.search(r"\.(png|jpe?g|webp|gif)(\?|$)", url, re.I) or [None, "png"])[1].lower()
+    IMG_DIR.mkdir(parents=True, exist_ok=True)
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    for i in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                data = r.read()
+            path = IMG_DIR / f"{code}.{ext}"
+            path.write_bytes(data)
+            return f"assets/promo/{code}.{ext}"
+        except Exception:
+            time.sleep(3 * (i + 1))
+    return None
 
 
 def parse_article(page: str):
@@ -142,6 +160,11 @@ def main() -> int:
             c["sourceTitle"] = n.get("title")
             c["sourceDate"] = n.get("date")
             c["auto"] = True
+            if c.get("image"):
+                local = save_image(c["image"], c["code"])
+                if local:
+                    c["imageOrig"] = c["image"]
+                    c["image"] = local
             c["found"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
             promo["codes"].insert(0, c)
             known.add(c["code"])
@@ -149,7 +172,15 @@ def main() -> int:
             print(f"Найден промокод {c['code']} ({c['set']}) в {n['url']}")
         time.sleep(1)
     promo["scannedNews"] = sorted(scanned, reverse=True)[:300]
-    if added or todo:
+    # дозагрузить картинки для уже найденных кодов, если раньше не получилось
+    fixed = 0
+    for c in promo["codes"]:
+        if c.get("image", "").startswith("http") and c.get("auto"):
+            local = save_image(c["image"], c["code"])
+            if local:
+                c["imageOrig"], c["image"] = c["image"], local
+                fixed += 1
+    if added or todo or fixed:
         if added:
             promo["updated"] = datetime.now(timezone.utc).date().isoformat()
         PROMO.write_text(json.dumps(promo, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

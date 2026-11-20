@@ -27,12 +27,12 @@ jobs:
         run: python scripts/fetch_promos.py
       - name: Сохранить, если есть изменения
         run: |
-          if git diff --quiet -- data/news.json data/promocodes.json; then
+          if git diff --quiet -- data/news.json data/promocodes.json && [ -z "$(git ls-files --others --exclude-standard assets/promo)" ]; then
             echo "Изменений нет"
             exit 0
           fi
           git config user.name "news-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/news.json data/promocodes.json
+          git add data/news.json data/promocodes.json assets/promo
           git commit -m "Новости и промокоды: автообновление"
           git push

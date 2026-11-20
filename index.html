@@ -13,20 +13,35 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/animations/shift-away.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=202611200703">
   <script>
     // тема до отрисовки, чтобы не мигало
     try { const t = localStorage.getItem('mk-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
   <script type="importmap">
   {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-      "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.es.js",
-      "fuse": "https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs",
-      "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.mjs"
-    }
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.es.js",
+    "fuse": "https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.mjs",
+    "./js/app.js": "./js/app.js?v=202611200703",
+    "./js/bg.js": "./js/bg.js?v=202611200703",
+    "./js/bosses.js": "./js/bosses.js?v=202611200703",
+    "./js/checklist.js": "./js/checklist.js?v=202611200703",
+    "./js/classes.js": "./js/classes.js?v=202611200703",
+    "./js/events.js": "./js/events.js?v=202611200703",
+    "./js/fx.js": "./js/fx.js?v=202611200703",
+    "./js/gold.js": "./js/gold.js?v=202611200703",
+    "./js/guides.js": "./js/guides.js?v=202611200703",
+    "./js/mascot.js": "./js/mascot.js?v=202611200703",
+    "./js/mechanics.js": "./js/mechanics.js?v=202611200703",
+    "./js/news.js": "./js/news.js?v=202611200703",
+    "./js/promo.js": "./js/promo.js?v=202611200703",
+    "./js/store.js": "./js/store.js?v=202611200703",
+    "./js/ui-screens.js": "./js/ui-screens.js?v=202611200703"
   }
+}
   </script>
 </head>
 <body>
@@ -115,6 +130,6 @@
   <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script type="module" src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/app.js?v=202611200703"></script>
 </body>
 </html>
