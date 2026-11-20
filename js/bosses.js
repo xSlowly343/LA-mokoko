@@ -19,10 +19,10 @@ function allModes(data) {
         if (!(e.start && e.end && e.start <= today() && today() <= e.end)) continue;
         for (const x of e.diffs || []) if (x.ilvl) out.push({ boss: b, group: g.title, mode: `Экстрим · ${x.name}`, ilvl: x.ilvl, gold: x.gold, bs: x.bs, color: m.color || '#b25cff', extreme: e });
       } else if (m.ilvl) {
-        out.push({ boss: b, group: g.title, mode: m.name, ilvl: m.ilvl, gold: m.gold, goldWeak: m.goldWeak, bs: m.bs, note: m.note, color: m.color });
+        out.push({ boss: b, group: g.title, mode: m.name, ilvl: m.ilvl, gold: m.gold, goldWeak: m.goldWeak, bs: m.bs, note: m.note, color: m.color, party: m.party || (m.name === 'Экспедиция' ? null : b.party) });
       }
     }
-    if (b.solo) out.push({ boss: b, group: g.title, mode: 'Соло', ilvl: b.solo, color: '#8fd16a', solo: true });
+    if (b.solo) out.push({ boss: b, group: g.title, mode: 'Соло', ilvl: b.solo, color: '#9aa4b5', solo: true, party: 1 });
   }
   return out;
 }
@@ -36,7 +36,7 @@ export async function renderBosses(page, bossId) {
     <div class="page-head">
       <div class="eyebrow">Рейды по ГС</div>
       <h1>Какие рейды ходить на вашем ГС</h1>
-      <p>Укажите уровень снаряжения — покажем рейды, куда уже пускает, лучшую сложность для каждого и сколько БС обычно просят в подборе.</p>
+      <p>Укажите уровень снаряжения — покажем рейды, куда уже пускает, все открытые режимы и сложности и сколько БС обычно просят в подборе.</p>
     </div>
     <div class="rg-pick frame">
       <div class="rg-pick-row">
@@ -62,7 +62,7 @@ export async function renderBosses(page, bossId) {
                 <h3>${esc(b.name)}</h3>
                 <div class="boss-tags">
                   ${b.party ? `<span class="btag party"><iconify-icon icon="game-icons:three-friends"></iconify-icon>${b.party} игроков</span>` : ''}
-                  ${b.solo ? `<span class="btag solo"><iconify-icon icon="game-icons:person"></iconify-icon>Соло с ${b.solo}</span>` : ''}
+                  ${b.solo ? `<span class="btag solo"><iconify-icon icon="game-icons:person"></iconify-icon>Соло (1 игрок) с ${b.solo}</span>` : ''}
                   ${b.expedition ? `<span class="btag exp"><iconify-icon icon="game-icons:backup"></iconify-icon>${esc(b.expedition)}</span>` : ''}
                 </div>
                 <div class="boss-modes">${b.modes.filter((m) => !m.extreme && m.ilvl).map((m) => `<span class="mode" style="--mcol:${esc(m.color || '#c9a45c')}"><b>${esc(m.name)}</b><span class="mc-meta"><span class="mc-ilvl"><iconify-icon icon="game-icons:checked-shield"></iconify-icon>${m.ilvl}${m.ilvlNote ? '*' : ''}</span>${m.bs ? `<span class="mc-bs">БС ${esc(m.bs)}</span>` : ''}</span></span>`).join('') || '<span class="muted" style="font-size:13px">Уровни входа не указаны в найденных источниках</span>'}</div>
@@ -82,36 +82,40 @@ export async function renderBosses(page, bossId) {
     inp.value = ilvl; rng.value = ilvl;
     rng.style.setProperty('--p', `${((ilvl - 1600) / 200) * 100}%`);
     page.querySelectorAll('[data-q]').forEach((b) => b.classList.toggle('on', Number(b.dataset.q) === ilvl));
-    const avail = modes.filter((m) => m.ilvl <= ilvl);
-    // лучшая доступная сложность у каждого босса (без соло)
-    const best = new Map();
-    for (const m of avail) {
-      if (m.solo) continue;
-      const k = m.boss.id + (m.extreme ? ':ex' : '');
-      if (!best.has(k) || best.get(k).ilvl < m.ilvl) best.set(k, m);
-    }
-    const top = [...best.values()].sort((a, b) => b.ilvl - a.ilvl);
-    const soon = modes.filter((m) => m.ilvl > ilvl && m.ilvl <= ilvl + 30 && !m.solo).sort((a, b) => a.ilvl - b.ilvl);
-    const row = (m, cls = '') => `
-      <div class="rg-row ${cls}" style="--mcol:${esc(m.color || '#c9a45c')}">
-        ${m.boss.noMedia ? '<span class="rg-thumb blank"><iconify-icon icon="game-icons:church"></iconify-icon></span>' : `<img class="rg-thumb" src="assets/bosses/${m.boss.id}-poster.webp" alt="" loading="lazy">`}
-        <div class="rg-name"><b>${esc(m.boss.name)}</b><small>${esc(m.group)}${m.boss.party ? ` · ${m.boss.party} игроков` : ''}</small></div>
-        <span class="rg-mode">${esc(m.mode)}</span>
+    const ORDER = ['Соло', 'Экспедиция', 'Обычный', 'Героический', 'Кошмарный'];
+    const rank = (m) => { const i = ORDER.findIndex((o) => m.mode.endsWith(o)); return i < 0 ? 9 : i; };
+    // группируем режимы по боссу (экстрим — отдельной карточкой)
+    const group = (list) => {
+      const map = new Map();
+      for (const m of list) {
+        const k = m.boss.id + (m.extreme ? ':ex' : '');
+        if (!map.has(k)) map.set(k, { boss: m.boss, group: m.group, extreme: m.extreme, modes: [] });
+        map.get(k).modes.push(m);
+      }
+      return [...map.values()].map((c) => ({ ...c, modes: c.modes.sort((a, b) => rank(a) - rank(b) || a.ilvl - b.ilvl), top: Math.max(...c.modes.map((m) => m.ilvl)) }));
+    };
+    const avail = group(modes.filter((m) => m.ilvl <= ilvl)).sort((a, b) => b.top - a.top);
+    const soon = group(modes.filter((m) => m.ilvl > ilvl && m.ilvl <= ilvl + 30)).sort((a, b) => Math.min(...a.modes.map((m) => m.ilvl)) - Math.min(...b.modes.map((m) => m.ilvl)));
+    const chip = (m) => `<span class="rg-chip ${m.solo ? 'solo' : ''}" style="--mcol:${esc(m.color || '#c9a45c')}">
+        <b>${esc(m.extreme ? m.mode.replace('Экстрим · ', '') : m.mode)}</b>
         <span class="rg-req"><iconify-icon icon="game-icons:checked-shield"></iconify-icon>${m.ilvl}</span>
-        <span class="rg-bs ${m.bs ? '' : 'empty'}" title="Боевая сила в подборе">${m.bs ? `БС ${esc(m.bs)}` : 'БС —'}</span>
-        ${m.extreme ? `<span class="rg-ex">до ${dmy(m.extreme.end)}</span>` : ''}
+        ${m.party ? `<span class="rg-party"><iconify-icon icon="game-icons:${m.party === 1 ? 'person' : 'three-friends'}"></iconify-icon>${m.party === 1 ? 'один' : m.party}</span>` : ''}
+        ${m.solo ? '' : `<span class="rg-bs ${m.bs ? '' : 'empty'}" title="Боевая сила в подборе">${m.bs ? `БС ${esc(m.bs)}` : 'БС —'}</span>`}
+      </span>`;
+    const card = (c, cls = '') => `
+      <div class="rg-card ${cls}">
+        ${c.boss.noMedia ? '<span class="rg-thumb blank"><iconify-icon icon="game-icons:church"></iconify-icon></span>' : `<img class="rg-thumb" src="assets/bosses/${c.boss.id}-poster.webp" alt="" loading="lazy">`}
+        <div class="rg-name"><b>${esc(c.boss.name)}${c.extreme ? ' · Экстрим' : ''}</b><small>${esc(c.group)}${c.extreme ? ` · до ${dmy(c.extreme.end)}` : ''}</small></div>
+        <div class="rg-chips">${c.modes.map(chip).join('')}</div>
       </div>`;
     res.innerHTML = `
       <section class="rg-block frame">
-        <h2><iconify-icon icon="game-icons:crossed-swords"></iconify-icon>Лучшее на ${ilvl} <span class="rg-count">${top.length}</span></h2>
-        ${top.length ? top.map((m) => row(m)).join('') : '<p class="muted">На этом уровне рейдов из списка ещё нет — поднимите ГС.</p>'}
+        <h2><iconify-icon icon="game-icons:crossed-swords"></iconify-icon>Доступно на ${ilvl} <span class="rg-count">${avail.length}</span></h2>
+        ${avail.length ? avail.map((c) => card(c)).join('') : '<p class="muted">На этом уровне рейдов из списка ещё нет — поднимите ГС.</p>'}
       </section>
-      ${soon.length ? `<section class="rg-block soon frame"><h2><iconify-icon icon="game-icons:hourglass"></iconify-icon>Скоро откроется</h2>
-        ${soon.map((m) => row(m, 'locked')).join('')}</section>` : ''}
-      ${avail.some((m) => m.solo) ? `<section class="rg-block frame"><h2><iconify-icon icon="game-icons:person"></iconify-icon>Соло-режимы</h2>
-        <p class="muted" style="margin:0 0 8px;font-size:13px">Меньше золота, нет энергии эсдо, зато без группы.</p>
-        <div class="rg-solo">${avail.filter((m) => m.solo).sort((a, b) => b.ilvl - a.ilvl).map((m) => `<span>${esc(m.boss.name)} <small>${m.ilvl}</small></span>`).join('')}</div></section>` : ''}`;
-    if (animate) anime({ targets: res.querySelectorAll('.rg-row'), opacity: [0, 1], translateX: [-10, 0], delay: anime.stagger(35), duration: 320, easing: 'easeOutQuad' });
+      ${soon.length ? `<section class="rg-block soon frame"><h2><iconify-icon icon="game-icons:hourglass"></iconify-icon>Скоро откроется (до +30)</h2>
+        ${soon.map((c) => card(c, 'locked')).join('')}</section>` : ''}`;
+    if (animate) anime({ targets: res.querySelectorAll('.rg-card'), opacity: [0, 1], translateX: [-10, 0], delay: anime.stagger(35), duration: 320, easing: 'easeOutQuad' });
   };
   draw(false);
 
