@@ -7,6 +7,22 @@ const DAY = 864e5;
 const startOf = (iso) => new Date(iso + 'T00:00:00').getTime();
 const endOf = (iso) => startOf(iso) + DAY; // конец дня end
 let timer;
+// иконка награды по ключевому слову
+const RI = [
+  [/слит|номинал/i, 'game-icons:gold-bar', '#f2c94c'], [/золот/i, 'game-icons:two-coins', '#f2c94c'], [/серебр/i, 'game-icons:coins', '#cfd6e0'],
+  [/рунит/i, 'game-icons:gem-pendant', '#b48cff'], [/сертификат/i, 'game-icons:scroll-unfurled', '#e8d5a6'], [/колод/i, 'game-icons:card-random', '#ff9a3c'],
+  [/кристалл/i, 'game-icons:crystal-growth', '#6fc0ff'], [/камень/i, 'game-icons:stone-block', '#9fb3c8'], [/осколк/i, 'game-icons:crystal-cluster', '#8fd16a'],
+  [/гравир/i, 'game-icons:book-cover', '#ffb05c'], [/жетон/i, 'game-icons:medal', '#e0c070'], [/катализ/i, 'game-icons:fizzing-flask', '#4fd1c5'],
+  [/энерги/i, 'game-icons:crystal-ball', '#6fa8ff'], [/наковальн/i, 'game-icons:anvil', '#c0c0c0'], [/искр/i, 'game-icons:sparkles', '#ffd84a'],
+  [/знак/i, 'game-icons:rune-stone', '#d29bff'], [/короб/i, 'game-icons:wooden-crate', '#c98d4a'], [/билет/i, 'game-icons:ticket', '#ff7b7b'],
+  [/эликсир|зель/i, 'game-icons:potion-ball', '#ff6bb5'], [/титул/i, 'game-icons:laurel-crown', '#f2c94c'], [/фон/i, 'game-icons:photo-camera', '#9fd0ff'],
+  [/сундук|шкатулк|ларец|сумк|мешоч|сундучок/i, 'game-icons:locked-chest', '#e0a050'], [/достижени/i, 'game-icons:trophy-cup', '#f2c94c'],
+];
+function rewardIcon(text) {
+  const key = text.split(':').pop();
+  const hit = RI.find(([re]) => re.test(key)) || RI.find(([re]) => re.test(text));
+  return hit ? `<span class="rw-ico" style="--ri:${hit[2]}"><iconify-icon icon="${hit[1]}"></iconify-icon></span>` : '<span class="rw-ico"><iconify-icon icon="game-icons:swap-bag"></iconify-icon></span>';
+}
 
 function left(ms) {
   if (ms <= 0) return 'завершено';
@@ -43,9 +59,9 @@ export async function renderEvents(page) {
   const card = (e) => {
     const total = e.e - e.s;
     const src = sources[e.source];
-    return `<article class="ev-card frame" style="--ev:${e.color}" data-end="${e.e}" data-start="${e.s}">
+    return ` <article class="ev-card frame ${e.bannerFull ? 'has-full' : ''}" style="--ev:${e.color}" data-end="${e.e}" data-start="${e.s}">
       <div class="ev-banner">
-        ${e.banner ? `<img src="${esc(e.banner)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
+        ${e.banner ? `<img src="${esc(e.banner)}" alt="${e.bannerFull ? esc(e.title) : ''}" class="${e.bannerFull ? 'full' : ''}" loading="lazy" onerror="this.remove()">` : ''}
         <div class="ev-banner-fx"></div>
         <span class="ev-ico">${esc(e.icon)}</span>
         <div class="ev-head">
@@ -62,7 +78,7 @@ export async function renderEvents(page) {
         ${e.rewards.map((r, i) => `
           <div class="acc" data-acc>
             <button class="acc-btn" aria-expanded="false"><span>🎁 ${esc(r.title)}</span><span class="acc-n">${r.items.length}</span><span class="acc-arrow">▾</span></button>
-            <div class="acc-panel"><ul class="rw">${r.items.map((it) => `<li>${esc(it)}</li>`).join('')}</ul></div>
+            <div class="acc-panel"><ul class="rw">${r.items.map((it) => `<li>${rewardIcon(it)}<span>${esc(it)}</span></li>`).join('')}</ul></div>
           </div>`).join('')}
         ${src ? `<div class="ev-src">Источник: <a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(src.title)}</a> · ${fmtDate(src.date)}</div>` : ''}
       </div>

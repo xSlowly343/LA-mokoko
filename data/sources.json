@@ -123,5 +123,55 @@
     "title": "Подробности обновления: новые игровые события («Аркландия», «Падение Бельгардина»)",
     "date": "2026-10-19",
     "url": "https://lostark.ru/news/2677-podrobnosti-obnovleniya-novye-igrovye-sobytiya-2"
+  },
+  "news-2541": {
+    "title": "Подробности обновления: рейд Теней и новое снаряжение («Пробуждение теней»)",
+    "date": "2026-04",
+    "url": "https://lostark.ru/news/2541-podrobnosti-obnovleniya-reyd-teney-i-novoe-snaryazhenie"
+  },
+  "news-2427": {
+    "title": "Подробности обновления: рейд Казероса — Финал. Судный день",
+    "date": "2025-11",
+    "url": "https://lostark.ru/news/2427-podrobnosti-obnovleniya-reyd-kazerosa-final-sudnyy-den"
+  },
+  "news-2421": {
+    "title": "Подробности обновления: рейд Казероса — Акт IV. Цитадель рока",
+    "date": "2025-11",
+    "url": "https://lostark.ru/news/2421-podrobnosti-obnovleniya-reyd-kazerosa-akt-iv-citadel-roka"
+  },
+  "wiki-mordum": {
+    "title": "Мордрум — Энциклопедия LOST ARK",
+    "date": null,
+    "url": "https://lostark.ru/wiki/Mordum"
+  },
+  "wiki-single": {
+    "title": "Одиночный режим — Энциклопедия LOST ARK",
+    "date": null,
+    "url": "https://lostark.ru/wiki/Single-mode"
+  },
+  "news-1982": {
+    "title": "Подробности обновления: новый рейд — Владыка Экидна",
+    "date": null,
+    "url": "https://lostark.ru/news/1982-podrobnosti-obnovleniya-novyy-reyd-vladyka-ekidna"
+  },
+  "wiki-behemoth": {
+    "title": "Бехемос, повелитель бури — Энциклопедия LOST ARK",
+    "date": null,
+    "url": "https://lostark.ru/wiki/Behemoth"
+  },
+  "wiki-kamen": {
+    "title": "Рейд на Владыку Тьмы — Камена — Энциклопедия LOST ARK",
+    "date": null,
+    "url": "https://lostark.ru/wiki/Kamen-raid"
+  },
+  "news-2476": {
+    "title": "Подробности обновления: событие «Камен: Экстремальный режим»",
+    "date": "2026-01-14",
+    "url": "https://lostark.ru/news/2476-podrobnosti-obnovleniya-sobytie-kamen-ekstremalnyy-rezhim"
+  },
+  "expcarry": {
+    "title": "How to Farm Gold in Lost Ark 2026 (сторонний гайд)",
+    "date": "2026-09",
+    "url": "https://expcarry.com/lost-ark-gold-farming-guide"
   }
 }

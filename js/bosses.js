@@ -5,9 +5,33 @@ import { reveal } from './fx.js';
 
 const GROUP_ICON = { 'Рейды Теней': 'game-icons:hooded-figure', 'Рейды Казероса': 'game-icons:daemon-skull', 'Владыки Фетрании': 'game-icons:crowned-skull', 'Хранители': 'game-icons:dragon-head', 'Эпические рейды': 'game-icons:spiked-dragon-head' };
 let io;
+const fmtN = (n) => Number(n).toLocaleString('ru-RU');
+const today = () => new Date().toISOString().slice(0, 10);
+const dmy = (iso) => { if (!iso) return '?'; const [y, m, d] = iso.split('-'); return d ? `${d}.${m}.${y}` : `${m}.${y}`; };
+
+function modeChip(m) {
+  const meta = [];
+  if (m.ilvl) meta.push(`<span class="mc-ilvl" title="Уровень снаряжения${m.ilvlNote ? ': ' + esc(m.ilvlNote) : ''}"><iconify-icon icon="game-icons:checked-shield"></iconify-icon>${m.ilvl}${m.ilvlNote ? '*' : ''}</span>`);
+  if (m.gold) meta.push(`<span class="mc-gold" title="${m.goldNote ? esc(m.goldNote) : ''}${m.goldWeak ? ' — по одному стороннему источнику' : ''}"><iconify-icon icon="game-icons:two-coins"></iconify-icon>${fmtN(m.gold)}${m.goldWeak ? '*' : ''}</span>`);
+  if (m.first) meta.push(`<span class="mc-date">${esc(m.first)}</span>`);
+  if (m.note) meta.push(`<span class="mc-date">${esc(m.note)}</span>`);
+  if (!meta.length) meta.push('<span class="mc-date">уровень уточняется</span>');
+  return `<span class="mode" style="--mcol:${esc(m.color || '#c9a45c')}"><b>${esc(m.name)}</b><span class="mc-meta">${meta.join('')}</span></span>`;
+}
+
+function extremeBlock(m) {
+  const e = m.extreme;
+  const live = e.start && e.end && e.start <= today() && today() <= e.end;
+  const status = !e.end ? '' : live ? '<span class="ex-live">идёт сейчас</span>' : e.end < today() ? '<span class="ex-done">завершён</span>' : '<span class="ex-live">скоро</span>';
+  return `<div class="extreme" style="--mcol:${esc(m.color || '#b25cff')}">
+    <div class="ex-head"><iconify-icon icon="game-icons:fire-ring"></iconify-icon><b>${esc(e.event)}</b>${status}</div>
+    ${e.end ? `<div class="ex-dates">${dmy(e.start)} — ${dmy(e.end)}</div>` : ''}
+    ${e.diffs?.length ? `<div class="boss-modes">${e.diffs.map((x) => modeChip({ ...x, color: m.color })).join('')}</div>` : ''}
+  </div>`;
+}
 
 export async function renderBosses(page, bossId) {
-  const data = await getJSON('data/bosses.json');
+  const [data, sources] = await Promise.all([getJSON('data/bosses.json'), getJSON('data/sources.json')]);
   page.innerHTML = `
     <div class="page-head">
       <div class="eyebrow">Боссы · данные «Зала славы» lostark.ru</div>
@@ -27,14 +51,16 @@ export async function renderBosses(page, bossId) {
               </div>
               <div class="boss-body">
                 <h3>${esc(b.name)}</h3>
-                <div class="boss-modes">${b.modes.map((m) => `<span class="mode" style="--mcol:${esc(m.color || '#c9a45c')}" title="${m.first ? 'Первое прохождение на РУ: ' + esc(m.first) : 'Ещё не пройдено на РУ'}">${esc(m.name)}${m.first ? `<small>${esc(m.first)}</small>` : '<small>—</small>'}</span>`).join('')}</div>
+                <div class="boss-modes">${b.modes.filter((m) => !m.extreme).map(modeChip).join('')}</div>
+                ${b.modes.filter((m) => m.extreme).map(extremeBlock).join('')}
+                ${b.src && sources[b.src] ? `<a class="m-src" href="${esc(sources[b.src].url)}" target="_blank" rel="noopener">ⓘ ${esc(sources[b.src].title)}</a>` : ''}
                 <p class="boss-text">${esc(b.text)}</p>
                 <button class="boss-more">Читать полностью ▾</button>
               </div>
             </article>`).join('')}
         </div>
       </section>`).join('')}
-    <p class="muted" style="font-size:12px">Даты под сложностями — первое прохождение на РУ-серверах. Видео и изображения: © Smilegate / lostark.ru.</p>`;
+    <p class="muted" style="font-size:12px">${esc(data.goldNote)} Видео и изображения: © Smilegate / lostark.ru.</p>`;
 
   // видео играют, только когда на экране
   io?.disconnect();

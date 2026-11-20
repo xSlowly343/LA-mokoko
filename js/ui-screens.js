@@ -14,8 +14,7 @@ export async function renderUI(view, screenId) {
   destroyTips();
   const data = await getJSON('data/screens.json');
   const screens = data.screens.map((s) => ({ ...s, ...(load('draft-' + s.id, null) || {}) }));
-  const screen = screens.find((s) => s.id === screenId) || screens[0];
-  const seen = load('seen-' + screen.id, []);
+  const first = screens.find((s) => s.id === screenId) || screens[0];
 
   view.innerHTML = `
     <div class="page-head">
@@ -26,51 +25,68 @@ export async function renderUI(view, screenId) {
     <div class="ui-layout">
       <nav class="screen-list frame" aria-label="Экраны">
         ${screens.map((s, i) => `
-          <a href="#/ui/${s.id}" class="${s.id === screen.id ? 'on' : ''} ${s.image ? '' : 'empty'}">
+          <a href="#/ui/${s.id}" data-sid="${s.id}" class="${s.image || s.mock ? '' : 'empty'}">
             <span class="s-ico">${esc(s.icon || '◆')}</span>${i}. ${esc(s.title)}
             <span class="s-num">${s.hotspots?.length || 0}</span>
           </a>`).join('')}
       </nav>
-      <section class="stage-wrap frame">
-        <div class="stage-bar">
-          <h2>${esc(screen.title)}</h2>
-          <div class="editor-row">
-            ${screen.image ? `<button class="btn ghost sm" id="toggleHs">Скрыть рамки</button>` : ''}
-            ${screen.hotspots?.length ? `<button class="btn ghost sm" id="resetSeen">Сбросить прогресс</button>` : ''}
-            <button class="btn ghost sm" id="editBtn">✎ Редактор</button>
-          </div>
-        </div>
-        ${screen.note ? `<p class="muted" style="margin:0 0 10px">${esc(screen.note)}</p>` : ''}
-        <div id="stageHost"></div>
-        <div id="editorHost"></div>
-      </section>
+      <section class="stage-wrap frame" id="stageWrap"></section>
     </div>`;
 
   const list = view.querySelector('.screen-list');
-  list.scrollLeft = listScroll;
+  const wrap = view.querySelector('#stageWrap');
   list.addEventListener('scroll', () => { listScroll = list.scrollLeft; }, { passive: true });
-  const on = list.querySelector('a.on');
-  if (on) {
-    const lr = list.getBoundingClientRect(), ar = on.getBoundingClientRect();
-    if (ar.left < lr.left || ar.right > lr.right) list.scrollTo({ left: list.scrollLeft + ar.left - lr.left - 16, behavior: 'smooth' });
-  }
-  const host = view.querySelector('#stageHost');
-  const state = { screen, seen, editing: false };
-  drawStage(host, state);
 
-  view.querySelector('#toggleHs')?.addEventListener('click', (e) => {
-    const st = host.querySelector('.stage');
-    st.classList.toggle('hide-hs');
-    e.currentTarget.textContent = st.classList.contains('hide-hs') ? 'Показать рамки' : 'Скрыть рамки';
-  });
-  view.querySelector('#resetSeen')?.addEventListener('click', () => {
-    state.seen = []; save('seen-' + screen.id, []); drawStage(host, state);
-  });
-  view.querySelector('#editBtn').addEventListener('click', () => {
-    state.editing = !state.editing;
+  const show = (screen, animate) => {
+    destroyTips();
+    list.querySelectorAll('a').forEach((a) => a.classList.toggle('on', a.dataset.sid === screen.id));
+    // выбранный пункт — в видимую часть ленты, без прыжка в начало
+    const on = list.querySelector('a.on');
+    if (on) {
+      const lr = list.getBoundingClientRect(), ar = on.getBoundingClientRect();
+      if (ar.left < lr.left || ar.right > lr.right) list.scrollTo({ left: list.scrollLeft + ar.left - lr.left - (lr.width - ar.width) / 2, behavior: animate ? 'smooth' : 'auto' });
+    }
+    const state = { screen, seen: load('seen-' + screen.id, []), editing: false };
+    wrap.innerHTML = `
+      <div class="stage-bar">
+        <h2>${esc(screen.title)}</h2>
+        <div class="editor-row">
+          ${screen.image ? `<button class="btn ghost sm" id="toggleHs">Скрыть рамки</button>` : ''}
+          ${screen.hotspots?.length ? `<button class="btn ghost sm" id="resetSeen">Сбросить прогресс</button>` : ''}
+          <button class="btn ghost sm" id="editBtn">✎ Редактор</button>
+        </div>
+      </div>
+      ${screen.note ? `<p class="muted" style="margin:0 0 10px">${esc(screen.note)}</p>` : ''}
+      <div id="stageHost"></div>
+      <div id="editorHost"></div>`;
+    const host = wrap.querySelector('#stageHost');
     drawStage(host, state);
-    drawEditor(view.querySelector('#editorHost'), host, state);
+    if (animate) anime({ targets: wrap, opacity: [0, 1], translateY: [8, 0], duration: 300, easing: 'easeOutQuad' });
+    wrap.querySelector('#toggleHs')?.addEventListener('click', (e) => {
+      const st = host.querySelector('.stage');
+      st.classList.toggle('hide-hs');
+      e.currentTarget.textContent = st.classList.contains('hide-hs') ? 'Показать рамки' : 'Скрыть рамки';
+    });
+    wrap.querySelector('#resetSeen')?.addEventListener('click', () => { state.seen = []; save('seen-' + screen.id, []); drawStage(host, state); });
+    wrap.querySelector('#editBtn').addEventListener('click', () => {
+      state.editing = !state.editing;
+      drawStage(host, state);
+      drawEditor(wrap.querySelector('#editorHost'), host, state);
+    });
+  };
+
+  // переключение экранов без перерисовки ленты (лента не прыгает в начало)
+  list.addEventListener('click', (e) => {
+    const a = e.target.closest('a[data-sid]'); if (!a) return;
+    e.preventDefault();
+    const sc = screens.find((s) => s.id === a.dataset.sid);
+    if (!sc || a.classList.contains('on')) return;
+    history.pushState(null, '', '#/ui/' + sc.id);
+    show(sc, true);
   });
+
+  list.scrollLeft = listScroll;
+  show(first, false);
 }
 
 function drawStage(host, state) {

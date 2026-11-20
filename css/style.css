@@ -872,3 +872,33 @@ main { overflow-x: clip; }
 .m-point p b { color: var(--text); }
 .ui-layout > * { min-width: 0; } .screen-list { max-width: 100%; }
 html, body { overflow-x: clip; }
+
+/* боссы v2 */
+.boss-icon { width: 108px !important; height: 54px !important; padding: 0 !important; object-fit: cover; border-radius: 10px !important; box-shadow: 0 4px 14px rgba(0,0,0,.5); }
+.mode { gap: 3px; padding: 6px 10px; }
+.mode b { font-size: 12.5px; }
+.mc-meta { display: flex; gap: 8px; flex-wrap: wrap; font-size: 11.5px; font-weight: 700; }
+.mc-meta iconify-icon { margin-right: 3px; font-size: 13px; }
+.mc-ilvl { color: #9fd0ff; } .mc-gold { color: #f2c94c; } .mc-date { color: var(--muted); font-weight: 600; }
+.extreme { padding: 10px 12px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--mcol) 55%, transparent); background: color-mix(in srgb, var(--mcol) 10%, transparent); display: grid; gap: 6px; }
+.ex-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13.5px; }
+.ex-head iconify-icon { color: #ff7b4a; font-size: 18px; }
+.ex-dates { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.ex-live, .ex-done { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 6px; }
+.ex-live { background: rgba(143,209,106,.18); color: var(--accent); }
+.ex-done { background: rgba(255,255,255,.08); color: var(--muted); }
+
+/* награды с иконками */
+.rw li { display: flex; align-items: center; gap: 10px; padding: 7px 10px; }
+.rw li::before { content: none; }
+.rw-ico { flex: none; width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font-size: 18px; color: var(--ri, var(--gold-hi));
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--ri, #c9a45c) 35%, #1a1522), #120f18); border: 1px solid color-mix(in srgb, var(--ri, #c9a45c) 55%, transparent);
+  box-shadow: inset 0 0 8px rgba(0,0,0,.6), 0 0 8px color-mix(in srgb, var(--ri, #c9a45c) 25%, transparent); }
+/* баннер-заголовок целиком (Падение Бельгардина) */
+.ev-card.has-full .ev-banner { flex-direction: column; align-items: stretch; min-height: 0; }
+.ev-banner img.full { position: relative; inset: auto; width: 100%; height: auto; object-fit: contain; opacity: 1; transform: none; }
+.ev-card.has-full:hover .ev-banner img.full { transform: none; opacity: 1; }
+.ev-card.has-full .ev-banner-fx { display: none; }
+.ev-card.has-full .ev-head h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.ev-card.has-full .ev-head { padding-top: 10px; }
+.ev-card.has-full .ev-ico { top: auto; bottom: 12px; }
