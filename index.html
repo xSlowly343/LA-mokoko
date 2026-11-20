@@ -42,6 +42,8 @@
       <a href="#/ui" data-nav="ui">Интерфейс</a>
       <a href="#/guides" data-nav="guides">Гайды</a>
       <a href="#/gold" data-nav="gold">Золото</a>
+      <a href="#/mechanics" data-nav="mechanics">Механики</a>
+      <a href="#/events" data-nav="events">События</a>
       <a href="#/checklist" data-nav="checklist">Чек-лист</a>
       <a href="#/sources" data-nav="sources">Источники</a>
     </nav>
@@ -61,9 +63,18 @@
     <a href="#/" data-nav="home"><span>⌂</span>Главная</a>
     <a href="#/ui" data-nav="ui"><span>◈</span>Интерфейс</a>
     <a href="#/guides" data-nav="guides"><span>❖</span>Гайды</a>
-    <a href="#/gold" data-nav="gold"><span>◉</span>Золото</a>
-    <a href="#/checklist" data-nav="checklist"><span>✓</span>Дела</a>
+    <a href="#/events" data-nav="events"><span>☄</span>События</a>
+    <button type="button" id="moreBtn" data-nav="more"><span>☰</span>Ещё</button>
   </nav>
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-panel">
+      <div class="sheet-grab"></div>
+      <a href="#/mechanics" data-nav="mechanics"><span>✴</span>Механики</a>
+      <a href="#/gold" data-nav="gold"><span>◉</span>Золото</a>
+      <a href="#/checklist" data-nav="checklist"><span>✓</span>Чек-лист</a>
+      <a href="#/sources" data-nav="sources"><span>ⓘ</span>Источники и ссылки</a>
+    </div>
+  </div>
 
   <div id="mascot" class="mascot" aria-live="polite">
     <div class="bubble" id="bubble" hidden data-lenis-prevent>

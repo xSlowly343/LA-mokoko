@@ -8,6 +8,8 @@ import { initMascot, say, hide as hideBubble } from './mascot.js';
 import { renderUI } from './ui-screens.js';
 import { renderGold } from './gold.js';
 import { renderChecklist } from './checklist.js';
+import { renderEvents, liveEvents, left, endOf } from './events.js';
+import { renderMechanics, MECH_INDEX } from './mechanics.js';
 import { initFX, reveal, transition, moveNavPill, intro, lenis } from './fx.js';
 
 const view = document.getElementById('view');
@@ -52,7 +54,13 @@ function pageHome(page) {
       <a class="tile frame" href="#/guides"><div class="t-ico">❖</div><h3>Гайды</h3><p>Только свежие патчи, у каждого факта источник и дата.</p></a>
       <a class="tile frame" href="#/gold"><div class="t-ico">◉</div><h3>Золото</h3><p>Сколько золота принесёт ваше Наследие за неделю.</p></a>
       <a class="tile frame" href="#/checklist"><div class="t-ico">✓</div><h3>Чек-лист</h3><p>Ежедневные и еженедельные дела с автосбросом.</p></a>
+      <a class="tile frame" href="#/mechanics"><div class="t-ico">✴</div><h3>Механики</h3><p>Изнурение, разрушение, контратака, парирование — в анимациях.</p></a>
+      <a class="tile frame" href="#/events"><div class="t-ico">☄</div><h3>События</h3><p>Что идёт сейчас, сколько осталось и какие награды.</p></a>
     </div>
+    <section class="section">
+      <div class="section-head"><h2>Сейчас в игре</h2><a href="#/events">Все события →</a></div>
+      <div class="ev-strip" id="homeEvents"></div>
+    </section>
     <section class="section">
       <div class="section-head"><h2>Начните с этого</h2><a href="#/guides">Все гайды →</a></div>
       <div class="guide-grid">${GUIDES.slice(0, 3).map((g) => guideCard(g, read)).join('')}</div>
@@ -61,16 +69,33 @@ function pageHome(page) {
       <div class="section-head"><h2>Полезные ссылки</h2><a href="#/sources">Все источники →</a></div>
       <div id="homeLinks"></div>
     </section>`;
-  getJSON('data/links.json').then((d) => { const h = page.querySelector('#homeLinks'); if (h) { h.innerHTML = linkCards(d.links); reveal(h); } });
+  getJSON('data/links.json').then((d) => { const h = page.querySelector('#homeLinks'); if (h) { h.innerHTML = linkBlock(d); wireLinkFilter(h); reveal(h); } });
+  liveEvents().then((evs) => { const h = page.querySelector('#homeEvents'); if (!h) return; h.innerHTML = evs.map((e) => `<a class="ev-mini frame" href="#/events" style="--ev:${e.color}"><span class="ev-mini-ico">${esc(e.icon)}</span><span><b>${esc(e.title)}</b><small>осталось ${left(endOf(e.end) - Date.now())}</small></span></a>`).join(''); reveal(h); });
   anime({ targets: page.querySelectorAll('.hero > div:first-child > *'), opacity: [0, 1], translateY: [16, 0], delay: anime.stagger(80), duration: 600, easing: 'easeOutCubic' });
   anime({ targets: page.querySelector('.hero-art .r2'), rotate: 360, duration: 60000, loop: true, easing: 'linear' });
   anime({ targets: '#heroMokoko', translateY: [-6, 6], direction: 'alternate', loop: true, duration: 1800, easing: 'easeInOutSine' });
   page.querySelector('#heroMokoko').addEventListener('click', () => say('Пи-пи!', '<p>Это я, ваш мококо-помощник. Я живу в правом нижнем углу — нажмите на меня, если нужен совет.</p>'));
 }
 
+function linkBlock(d) {
+  const groups = Object.entries(d.groups || { ru: 'Все' });
+  return `<div class="filters link-filters">
+      <button class="chip on" data-lg="all">Все · ${d.links.length}</button>
+      ${groups.map(([k, v]) => `<button class="chip" data-lg="${k}">${esc(v)} · ${d.links.filter((l) => l.group === k).length}</button>`).join('')}
+    </div>${linkCards(d.links)}`;
+}
+function wireLinkFilter(root) {
+  root.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-lg]'); if (!b) return;
+    root.querySelectorAll('[data-lg]').forEach((x) => x.classList.toggle('on', x === b));
+    const cards = [...root.querySelectorAll('.link-card')];
+    cards.forEach((c) => { c.hidden = !(b.dataset.lg === 'all' || c.dataset.group === b.dataset.lg); });
+    anime({ targets: cards.filter((c) => !c.hidden), opacity: [0, 1], translateY: [10, 0], delay: anime.stagger(40), duration: 350, easing: 'easeOutQuad' });
+  });
+}
 function linkCards(links) {
   return `<div class="link-grid">${links.map((l) => `
-    <a class="link-card frame" href="${esc(l.url)}" target="_blank" rel="noopener">
+    <a class="link-card frame" data-group="${esc(l.group || '')}" href="${esc(l.url)}" target="_blank" rel="noopener">
       <div class="lc-top"><span class="lc-ico">${esc(l.icon)}</span><span class="tag">${esc(l.kind)}</span></div>
       <h3>${esc(l.title)}</h3>
       <p>${esc(l.desc)}</p>
@@ -155,7 +180,8 @@ async function pageSources(page) {
       </tbody></table></div>
       <div class="callout">Нашли ошибку или устаревший факт? Создайте issue в репозитории сайта со ссылкой на свежий источник.</div>
     </div>
-    <section class="section"><div class="section-head"><h2>Полезные ссылки</h2></div>${linkCards(links.links)}</section>`;
+    <section class="section" id="srcLinks"><div class="section-head"><h2>Полезные ссылки</h2></div>${linkBlock(links)}</section>`;
+  wireLinkFilter(page.querySelector('#srcLinks'));
 }
 
 // ===== Роутер =====
@@ -166,13 +192,27 @@ const routes = {
   gold: (p) => renderGold(p),
   checklist: (p) => renderChecklist(p),
   sources: pageSources,
+  mechanics: (p, id) => renderMechanics(p).then(() => id && setTimeout(() => jumpTo('#m-' + id), 50)),
+  events: (p) => renderEvents(p),
 };
+function jumpTo(sel) {
+  const el = document.querySelector(sel); if (!el) return;
+  if (lenis) lenis.scrollTo(el, { offset: -80 }); else el.scrollIntoView({ behavior: 'smooth' });
+}
+// прыжки внутри страницы «Механики» без перерисовки
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('.m-jump a'); if (!a) return;
+  e.preventDefault();
+  history.replaceState(null, '', a.getAttribute('href'));
+  jumpTo('#m-' + a.getAttribute('href').split('/').pop());
+});
 
 let routed = false;
 async function route() {
   const [, section = '', id] = (location.hash || '#/').split('/');
   const fn = routes[section] || pageHome;
-  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home')));
+  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources'].includes(section))));
+  closeSheet();
   srcTips.forEach((t) => t.destroy()); srcTips = [];
   const first = !routed;
   if (routed) hideBubble();
@@ -198,6 +238,7 @@ async function initSearch() {
   const input = document.getElementById('searchInput');
   const out = document.getElementById('searchResults');
   const [raids, screens, links] = await Promise.all([getJSON('data/raids.json').catch(() => ({ raids: [] })), getJSON('data/screens.json').catch(() => ({ screens: [] })), getJSON('data/links.json').catch(() => ({ links: [] }))]);
+  const events = await getJSON('data/events.json').catch(() => ({ events: [] }));
   const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   const docs = [
     ...GUIDES.map((g) => ({ title: g.title, sub: 'Гайд · ' + g.tag, text: g.summary + ' ' + strip(g.body), href: '#/guides/' + g.id })),
@@ -205,6 +246,8 @@ async function initSearch() {
     ...screens.screens.flatMap((s) => [{ title: s.title, sub: 'Интерфейс', text: '', href: '#/ui/' + s.id },
       ...(s.hotspots || []).map((h) => ({ title: h.title, sub: 'Интерфейс · ' + s.title, text: h.text, href: '#/ui/' + s.id }))]),
     ...links.links.map((l) => ({ title: l.title, sub: 'Полезная ссылка · ' + l.domain, text: l.desc, href: l.url, ext: true })),
+    ...MECH_INDEX.map((m) => ({ title: m.name, sub: 'Механика', text: m.text, href: '#/mechanics/' + m.id })),
+    ...(events.events || []).map((e) => ({ title: e.title, sub: 'Событие · ' + e.kind, text: (e.how || []).join(' ') + ' ' + e.rewards.flatMap((r) => r.items).join(' '), href: '#/events' })),
     { title: 'Чек-лист дел', sub: 'Инструмент', text: 'ежедневные еженедельные сброс', href: '#/checklist' },
     { title: 'Источники', sub: 'Справка', text: 'lostark.ru патчноуты', href: '#/sources' },
   ];
@@ -225,6 +268,25 @@ async function initSearch() {
   out.addEventListener('click', (e) => { if (e.target.closest('a')) dlg.close(); });
   dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
 }
+
+// ===== Мобильное меню «Ещё» =====
+const sheet = document.getElementById('sheet');
+function closeSheet() {
+  if (!sheet || sheet.hidden) return;
+  document.body.classList.remove('sheet-open');
+  anime({ targets: sheet.querySelector('.sheet-panel'), translateY: [0, 300], duration: 250, easing: 'easeInQuad' });
+  anime({ targets: sheet, opacity: [1, 0], duration: 250, easing: 'linear', complete: () => { sheet.hidden = true; } });
+}
+document.getElementById('moreBtn')?.addEventListener('click', () => {
+  if (!sheet.hidden) { closeSheet(); return; }
+  sheet.hidden = false;
+  hideBubble();
+  document.body.classList.add('sheet-open');
+  anime({ targets: sheet, opacity: [0, 1], duration: 200, easing: 'linear' });
+  anime({ targets: sheet.querySelector('.sheet-panel'), translateY: [300, 0], duration: 420, easing: 'easeOutCubic' });
+  anime({ targets: sheet.querySelectorAll('a'), opacity: [0, 1], translateY: [12, 0], delay: anime.stagger(50, { start: 120 }), duration: 350, easing: 'easeOutQuad' });
+});
+sheet?.addEventListener('click', (e) => { if (e.target === sheet || e.target.closest('a')) closeSheet(); });
 
 // ===== Тема =====
 document.getElementById('themeBtn').addEventListener('click', () => {

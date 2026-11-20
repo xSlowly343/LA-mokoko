@@ -67,6 +67,26 @@ export async function renderUI(view, screenId) {
 function drawStage(host, state) {
   destroyTips();
   const { screen } = state;
+  if (screen.mock && !state.editing && !screen.image) {
+    const hs = screen.hotspots || [];
+    const groups = [...new Set(hs.map((h) => h.group))];
+    host.innerHTML = `
+      <div class="stage menu-stage">
+        <div class="mm-scene" aria-hidden="true"><div class="mm-hint">${esc(screen.mockHint || '')}</div></div>
+        <div class="menu-mock">
+          ${groups.map((g) => `<div class="mm-group"><div class="mm-gtitle">${esc(g)}</div><div class="mm-row">
+            ${hs.map((h, i) => h.group !== g ? '' : `<button class="hotspot mm-btn ${state.seen.includes(h.id) ? 'seen' : ''}" data-id="${esc(h.id)}" aria-label="${esc(h.title)}">
+              <span class="mm-ico">${esc(h.icon || '◆')}</span><span class="mm-lbl">${esc(h.title)}</span>${h.key ? `<kbd>${esc(h.key)}</kbd>` : ''}<span class="hs-n">${i + 1}</span></button>`).join('')}
+          </div></div>`).join('')}
+        </div>
+      </div>
+      <div class="progress" title="Изучено"><i></i></div>
+      <p class="muted" style="margin:6px 0 0;font-size:13px" id="progTxt"></p>`;
+    updateProgress(host, state);
+    anime({ targets: host.querySelectorAll('.mm-btn'), opacity: [0, 1], translateY: [10, 0], delay: anime.stagger(60), duration: 450, easing: 'easeOutBack' });
+    wireHotspots(host.querySelector('.stage'), hs, state, host);
+    return;
+  }
   if (!screen.image) {
     host.innerHTML = `<div class="empty-screen">
       <div class="big">▢</div>
@@ -92,10 +112,13 @@ function drawStage(host, state) {
   anime({ targets: stage.querySelectorAll('.hotspot'), opacity: [0, 1], scale: [.85, 1], delay: anime.stagger(70), duration: 450, easing: 'easeOutBack' });
 
   if (state.editing) { enableDrawing(stage, state, host); return; }
+  wireHotspots(stage, hs, state, host);
+}
 
+function wireHotspots(stage, hs, state, host) {
   stage.querySelectorAll('.hotspot').forEach((btn) => {
     const h = hs.find((x) => x.id === btn.dataset.id);
-    const html = `<div class="tip-card"><b>${esc(h.title)}</b>${esc(h.text).replace(/\n/g, '<br>')}${h.tip ? `<div class="tip-adv">✦ ${esc(h.tip)}</div>` : ''}</div>`;
+    const html = `<div class="tip-card"><b>${esc(h.title)}</b>${h.key ? `<p style="margin:0 0 6px">Клавиши: <kbd>${esc(h.key)}</kbd></p>` : ''}${esc(h.text).replace(/\n/g, '<br>')}${h.src ? `<div class="muted" style="font-size:12px;margin-top:6px">Источник: Энциклопедия lostark.ru</div>` : ''}${h.tip ? `<div class="tip-adv">✦ ${esc(h.tip)}</div>` : ''}</div>`;
     if (window.tippy && !isNarrow()) {
       tips.push(window.tippy(btn, {
         content: html, allowHTML: true, trigger: 'click', interactive: true, theme: 'lostark',
