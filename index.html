@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Тропа мококо — гайды Lost Ark</title>
+  <meta name="description" content="Интерактивный путеводитель по Lost Ark (РУ) для новичков: разбор интерфейса, актуальные гайды с источниками, калькулятор золота и чек-лист.">
+  <meta name="theme-color" content="#0d0b12">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='38' rx='22' ry='20' fill='%23cfe39a'/%3E%3Cpath d='M32 18c-4-10 4-14 10-12-2 6-6 10-10 12z' fill='%237fb24a'/%3E%3Ccircle cx='25' cy='38' r='3' fill='%23222'/%3E%3Ccircle cx='39' cy='38' r='3' fill='%23222'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/animations/shift-away.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    // тема до отрисовки, чтобы не мигало
+    try { const t = localStorage.getItem('mk-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.es.js",
+      "fuse": "https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs"
+    }
+  }
+  </script>
+</head>
+<body>
+  <canvas id="bg" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-text">Тропа <em>мококо</em></span>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#/" data-nav="home">Главная</a>
+      <a href="#/ui" data-nav="ui">Интерфейс</a>
+      <a href="#/guides" data-nav="guides">Гайды</a>
+      <a href="#/gold" data-nav="gold">Золото</a>
+      <a href="#/checklist" data-nav="checklist">Чек-лист</a>
+      <a href="#/sources" data-nav="sources">Источники</a>
+    </nav>
+    <div class="top-actions">
+      <button class="icon-btn" id="searchBtn" aria-label="Поиск (/)" title="Поиск (/)">
+        <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <button class="icon-btn" id="themeBtn" aria-label="Сменить тему" title="Сменить тему">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="view" tabindex="-1"></main>
+
+  <nav class="tabbar" aria-label="Разделы (мобильные)">
+    <a href="#/" data-nav="home"><span>⌂</span>Главная</a>
+    <a href="#/ui" data-nav="ui"><span>◈</span>Интерфейс</a>
+    <a href="#/guides" data-nav="guides"><span>❖</span>Гайды</a>
+    <a href="#/gold" data-nav="gold"><span>◉</span>Золото</a>
+    <a href="#/checklist" data-nav="checklist"><span>✓</span>Дела</a>
+  </nav>
+
+  <div id="mascot" class="mascot" aria-live="polite">
+    <div class="bubble" id="bubble" hidden>
+      <button class="bubble-x" aria-label="Закрыть">×</button>
+      <div class="bubble-title" id="bubbleTitle"></div>
+      <div class="bubble-text" id="bubbleText"></div>
+    </div>
+    <button class="mascot-btn" id="mascotBtn" aria-label="Мококо-помощник"><span class="mascot-img"></span></button>
+  </div>
+
+  <dialog id="searchDlg" class="search-dlg">
+    <form method="dialog" class="search-box">
+      <input id="searchInput" type="search" placeholder="Что ищем? Например: золото, Бельгардин, удалено…" autocomplete="off">
+      <button class="icon-btn" aria-label="Закрыть">✕</button>
+    </form>
+    <ul id="searchResults" class="search-results"></ul>
+  </dialog>
+
+  <footer class="footer">
+    Фанатский некоммерческий сайт. Lost Ark — товарный знак правообладателей; сайт с ними не связан. Данные сверены с lostark.ru, дата проверки указана у каждого раздела.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
