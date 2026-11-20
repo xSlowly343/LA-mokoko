@@ -57,7 +57,8 @@ export async function renderClasses(page, classId) {
       </div>
       <div class="cd-body">
         <p class="cd-lead">${esc(c.text)}</p>
-        <div class="cd-block"><img src="assets/classes/${c.id}-icon.webp" alt=""><div><b class="hl-gold">Оружие класса</b><p>${esc(c.weapon)}</p></div></div>
+        ${c.weapon ? `<div class="cd-block"><img src="assets/classes/${c.id}-icon.webp" alt=""><div><b class="hl-gold">Оружие класса</b><p>${esc(c.weapon)}</p></div></div>` : ''}
+        ${c.skills ? `<div class="cd-block"><img src="assets/classes/${c.id}-icon.webp" alt=""><div><b class="hl-green">Группы умений</b><p>${esc(c.skills)}</p></div></div>` : ''}
         <div class="cd-block"><iconify-icon icon="game-icons:power-lightning"></iconify-icon><div><b class="hl-blue">Особенность класса</b><p>${esc(c.feature)}</p></div></div>
         <a class="btn ghost sm" href="https://lostark.ru/classes" target="_blank" rel="noopener">Страница классов на lostark.ru ↗</a>
       </div>`;

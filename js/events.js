@@ -9,6 +9,7 @@ const endOf = (iso) => startOf(iso) + DAY; // конец дня end
 let timer;
 // Иконки наград — предметы из базы lostarkcodex.com/ru (assets/items). Порядок важен: сначала точные.
 const RI = [
+  [/знак\S* грозы/i, 'znak-grozy'], [/знак хаоса/i, 'znak-haosa'],
   [/короб[^;]*кошмар/i, 'use_11_163'], [/короб[^;]*героич/i, 'use_11_162'], [/короб/i, 'use_11_161'],
   [/персонального золота|слиток|номинал/i, 'use_13_34'], [/золот/i, 'use_13_34'], [/серебр/i, 'use_14_24'],
   [/сертификат на сброс рунита/i, 'use_13_201'], [/рунит/i, 'shop_icon_9963'],
@@ -76,6 +77,7 @@ export async function renderEvents(page) {
       <div class="ev-body">
         <div class="ev-timer"><span class="ev-left" data-left>${left(e.e - Date.now())}</span><span class="muted">осталось</span></div>
         <div class="ev-bar"><i style="width:${Math.min(100, Math.max(0, ((Date.now() - e.s) / total) * 100))}%"></i></div>
+        ${e.tokens ? `<div class="ev-tokens">${e.tokens.map((k) => `<span><img src="${esc(k.src)}" alt="">${esc(k.name)}</span>`).join('')}</div>` : ''}
         ${e.req?.length ? `<div class="ev-req">${e.req.map((r) => `<span>${esc(r)}</span>`).join('')}</div>` : ''}
         ${e.how?.length ? `<ul class="ev-how">${e.how.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
         ${e.rewards.map((r, i) => `
@@ -83,6 +85,7 @@ export async function renderEvents(page) {
             <button class="acc-btn" aria-expanded="false"><span>🎁 ${esc(r.title)}</span><span class="acc-n">${r.items.length}</span><span class="acc-arrow">▾</span></button>
             <div class="acc-panel"><ul class="rw">${r.items.map((it) => `<li>${rewardIcon(it)}<span>${esc(it)}</span></li>`).join('')}</ul></div>
           </div>`).join('')}
+        ${e.gallery ? `<div class="ev-gallery" data-lenis-prevent>${e.gallery.map((g, i) => `<button class="ev-shot" data-gal="${e.id}" data-i="${i}"><img src="${esc(g.src)}" alt="${esc(g.cap)}" loading="lazy"><span>${esc(g.cap)}</span></button>`).join('')}</div>` : ''}
         ${src ? `<div class="ev-src">Источник: <a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(src.title)}</a> · ${fmtDate(src.date)}</div>` : ''}
       </div>
     </article>`;
@@ -96,7 +99,25 @@ export async function renderEvents(page) {
   };
   draw();
 
+  const lb = document.createElement('dialog'); lb.className = 'lightbox'; page.appendChild(lb);
+  const openShot = (id, i) => {
+    const gal = data.events.find((x) => x.id === id).gallery;
+    const g = gal[i];
+    lb.innerHTML = `<button class="lb-x" aria-label="Закрыть">×</button>
+      ${i > 0 ? '<button class="lb-nav prev" aria-label="Назад">‹</button>' : ''}${i < gal.length - 1 ? '<button class="lb-nav next" aria-label="Вперёд">›</button>' : ''}
+      <img src="${esc(g.src)}" alt="${esc(g.cap)}"><p>${esc(g.cap)} · ${i + 1}/${gal.length}</p>`;
+    lb.dataset.id = id; lb.dataset.i = i;
+    if (!lb.open) lb.showModal();
+    anime({ targets: lb.querySelector('img'), opacity: [0, 1], scale: [.97, 1], duration: 300, easing: 'easeOutQuad' });
+  };
+  lb.addEventListener('click', (ev) => {
+    if (ev.target.closest('.lb-x') || ev.target === lb) { lb.close(); return; }
+    const nav = ev.target.closest('.lb-nav');
+    if (nav) openShot(lb.dataset.id, Number(lb.dataset.i) + (nav.classList.contains('next') ? 1 : -1));
+  });
   page.addEventListener('click', (ev) => {
+    const shot = ev.target.closest('.ev-shot');
+    if (shot) { openShot(shot.dataset.gal, Number(shot.dataset.i)); return; }
     const t = ev.target.closest('[data-tab]');
     if (t) { tab = t.dataset.tab; save('ev-tab', tab); draw(); return; }
     const btn = ev.target.closest('.acc-btn');
