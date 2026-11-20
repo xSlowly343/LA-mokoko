@@ -13,6 +13,7 @@ import { renderMechanics, MECH_INDEX } from './mechanics.js';
 import { renderClasses, classIndex } from './classes.js';
 import { renderBosses, bossIndex } from './bosses.js';
 import { renderPromo, activePromoCount } from './promo.js';
+import { renderNews, getNews, newsCard, isNew, markNewInNav } from './news.js';
 import { initFX, reveal, transition, moveNavPill, intro, lenis } from './fx.js';
 
 const view = document.getElementById('view');
@@ -64,6 +65,10 @@ function pageHome(page) {
     </div>
     <a class="promo-strip frame" href="#/promo" id="promoStrip"><iconify-icon icon="game-icons:present"></iconify-icon><span><b>Промокоды</b><small id="promoCnt">официальные коды и быстрая активация</small></span><span class="ps-go">Открыть →</span></a>
     <section class="section">
+      <div class="section-head"><h2>Новости</h2><a href="#/news">Все новости →</a></div>
+      <div class="news-grid home" id="homeNews"><p class="muted">Загружаем…</p></div>
+    </section>
+    <section class="section">
       <div class="section-head"><h2>Сейчас в игре</h2><a href="#/events">Все события →</a></div>
       <div class="ev-strip" id="homeEvents"></div>
     </section>
@@ -76,6 +81,7 @@ function pageHome(page) {
       <div id="homeLinks"></div>
     </section>`;
   getJSON('data/links.json').then((d) => { const h = page.querySelector('#homeLinks'); if (h) { h.innerHTML = linkBlock(d); wireLinkFilter(h); reveal(h); } });
+  getNews().then((d) => { const h = page.querySelector('#homeNews'); if (!h) return; const it = (d.items || []).slice(0, 4); h.innerHTML = it.map((n) => newsCard(n, { compact: true })).join(''); reveal(h); }).catch(() => { const h = page.querySelector('#homeNews'); if (h) h.innerHTML = '<p class="muted">Новости недоступны.</p>'; });
   activePromoCount().then((n) => { const el = page.querySelector('#promoCnt'); if (el) el.textContent = n ? `активных кодов: ${n} — скопировать и активировать в один клик` : 'сейчас активных кодов нет'; });
   liveEvents().then((evs) => { const h = page.querySelector('#homeEvents'); if (!h) return; h.innerHTML = evs.map((e) => `<a class="ev-mini frame" href="#/events" style="--ev:${e.color}"><span class="ev-mini-ico">${esc(e.icon)}</span><span><b>${esc(e.title)}</b><small>осталось ${left(endOf(e.end) - Date.now())}</small></span></a>`).join(''); reveal(h); });
   anime({ targets: page.querySelectorAll('.hero > div:first-child > *'), opacity: [0, 1], translateY: [16, 0], delay: anime.stagger(80), duration: 600, easing: 'easeOutCubic' });
@@ -206,6 +212,7 @@ const routes = {
   classes: (p, id) => renderClasses(p, id),
   bosses: (p, id) => renderBosses(p, id),
   promo: (p) => renderPromo(p),
+  news: (p) => renderNews(p),
 };
 function jumpTo(sel) {
   const el = document.querySelector(sel); if (!el) return;
@@ -224,7 +231,7 @@ let lastSection = null;
 async function route() {
   const [, section = '', id] = (location.hash || '#/').split('/');
   const fn = routes[section] || pageHome;
-  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources', 'classes', 'bosses', 'promo'].includes(section)) || (a.dataset.nav === 'nav-more' && ['checklist', 'sources', 'promo'].includes(section))));
+  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources', 'classes', 'bosses', 'promo', 'news'].includes(section)) || (a.dataset.nav === 'nav-more' && ['checklist', 'sources', 'promo'].includes(section))));
   closeSheet();
   srcTips.forEach((t) => t.destroy()); srcTips = [];
   const first = !routed;
@@ -322,6 +329,8 @@ addEventListener('resize', moveNavPill);
 document.fonts?.ready.then(moveNavPill);
 initMascot();
 addEventListener('hashchange', route);
+markNewInNav();
+setInterval(markNewInNav, 30 * 60e3);
 route();
 initSearch();
 if (!load('greeted', false)) {
