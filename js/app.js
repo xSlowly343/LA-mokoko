@@ -12,6 +12,7 @@ import { renderEvents, liveEvents, left, endOf } from './events.js';
 import { renderMechanics, MECH_INDEX } from './mechanics.js';
 import { renderClasses, classIndex } from './classes.js';
 import { renderBosses, bossIndex } from './bosses.js';
+import { renderPromo, activePromoCount } from './promo.js';
 import { initFX, reveal, transition, moveNavPill, intro, lenis } from './fx.js';
 
 const view = document.getElementById('view');
@@ -61,6 +62,7 @@ function pageHome(page) {
       <a class="tile frame" href="#/classes"><div class="t-ico">⚔</div><h3>Классы</h3><p>30 классов в 7 архетипах — официальные описания.</p></a>
       <a class="tile frame" href="#/bosses"><div class="t-ico">☠</div><h3>Боссы</h3><p>Рейды и боссы с роликами и датами первых побед на РУ.</p></a>
     </div>
+    <a class="promo-strip frame" href="#/promo" id="promoStrip"><iconify-icon icon="game-icons:present"></iconify-icon><span><b>Промокоды</b><small id="promoCnt">официальные коды и быстрая активация</small></span><span class="ps-go">Открыть →</span></a>
     <section class="section">
       <div class="section-head"><h2>Сейчас в игре</h2><a href="#/events">Все события →</a></div>
       <div class="ev-strip" id="homeEvents"></div>
@@ -74,6 +76,7 @@ function pageHome(page) {
       <div id="homeLinks"></div>
     </section>`;
   getJSON('data/links.json').then((d) => { const h = page.querySelector('#homeLinks'); if (h) { h.innerHTML = linkBlock(d); wireLinkFilter(h); reveal(h); } });
+  activePromoCount().then((n) => { const el = page.querySelector('#promoCnt'); if (el) el.textContent = n ? `активных кодов: ${n} — скопировать и активировать в один клик` : 'сейчас активных кодов нет'; });
   liveEvents().then((evs) => { const h = page.querySelector('#homeEvents'); if (!h) return; h.innerHTML = evs.map((e) => `<a class="ev-mini frame" href="#/events" style="--ev:${e.color}"><span class="ev-mini-ico">${esc(e.icon)}</span><span><b>${esc(e.title)}</b><small>осталось ${left(endOf(e.end) - Date.now())}</small></span></a>`).join(''); reveal(h); });
   anime({ targets: page.querySelectorAll('.hero > div:first-child > *'), opacity: [0, 1], translateY: [16, 0], delay: anime.stagger(80), duration: 600, easing: 'easeOutCubic' });
   anime({ targets: page.querySelector('.hero-art .r2'), rotate: 360, duration: 60000, loop: true, easing: 'linear' });
@@ -202,6 +205,7 @@ const routes = {
   events: (p) => renderEvents(p),
   classes: (p, id) => renderClasses(p, id),
   bosses: (p, id) => renderBosses(p, id),
+  promo: (p) => renderPromo(p),
 };
 function jumpTo(sel) {
   const el = document.querySelector(sel); if (!el) return;
@@ -220,7 +224,7 @@ let lastSection = null;
 async function route() {
   const [, section = '', id] = (location.hash || '#/').split('/');
   const fn = routes[section] || pageHome;
-  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources', 'classes', 'bosses'].includes(section)) || (a.dataset.nav === 'nav-more' && ['checklist', 'sources'].includes(section))));
+  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources', 'classes', 'bosses', 'promo'].includes(section)) || (a.dataset.nav === 'nav-more' && ['checklist', 'sources', 'promo'].includes(section))));
   closeSheet();
   srcTips.forEach((t) => t.destroy()); srcTips = [];
   const first = !routed;
@@ -249,6 +253,7 @@ async function initSearch() {
   const out = document.getElementById('searchResults');
   const [raids, screens, links] = await Promise.all([getJSON('data/raids.json').catch(() => ({ raids: [] })), getJSON('data/screens.json').catch(() => ({ screens: [] })), getJSON('data/links.json').catch(() => ({ links: [] }))]);
   const events = await getJSON('data/events.json').catch(() => ({ events: [] }));
+  const promos = await getJSON('data/promocodes.json').catch(() => ({ codes: [] }));
   const [clsIdx, bossIdx] = await Promise.all([classIndex().catch(() => []), bossIndex().catch(() => [])]);
   const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   const docs = [
@@ -260,6 +265,7 @@ async function initSearch() {
     ...MECH_INDEX.map((m) => ({ title: m.name, sub: 'Механика', text: m.text, href: '#/mechanics/' + m.id })),
     ...(events.events || []).map((e) => ({ title: e.title, sub: 'Событие · ' + e.kind, text: (e.how || []).join(' ') + ' ' + e.rewards.flatMap((r) => r.items).join(' '), href: '#/events' })),
     ...clsIdx, ...bossIdx,
+    { title: 'Промокоды', sub: 'Коды и активация', text: 'промокод код подарок активировать ' + promos.codes.map((c) => c.code + ' ' + c.set).join(' '), href: '#/promo' },
     { title: 'Чек-лист дел', sub: 'Инструмент', text: 'ежедневные еженедельные сброс', href: '#/checklist' },
     { title: 'Источники', sub: 'Справка', text: 'lostark.ru патчноуты', href: '#/sources' },
   ];

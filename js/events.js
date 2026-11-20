@@ -9,6 +9,7 @@ const endOf = (iso) => startOf(iso) + DAY; // конец дня end
 let timer;
 // Иконки наград — предметы из базы lostarkcodex.com/ru (assets/items). Порядок важен: сначала точные.
 const RI = [
+  [/древним ядром/i, 'ancient-core'], [/древним рунитом/i, 'ancient-runit'], [/сияющая искра хаоса/i, 'spark-weapon'], [/котомка/i, 'all_quest_02_208'],
   [/знак\S* грозы/i, 'znak-grozy'], [/знак хаоса/i, 'znak-haosa'],
   [/короб[^;]*кошмар/i, 'use_11_163'], [/короб[^;]*героич/i, 'use_11_162'], [/короб/i, 'use_11_161'],
   [/персонального золота|слиток|номинал/i, 'use_13_34'], [/золот/i, 'use_13_34'], [/серебр/i, 'use_14_24'],
@@ -20,9 +21,9 @@ const RI = [
   [/сокровище вечного солнца/i, 'use_7_26'], [/искр\S* хаоса/i, 'use_4_227'], [/искр/i, 'use_13_220'],
   [/гравир|эскиз/i, 'all_quest_02_208'], [/браслет/i, 'use_10_249'], [/ядра/i, 'use_4_224'], [/наковальн/i, 'shop_icon_9'],
   [/авидорский сундук с кристаллами судьбы/i, 'shop_icon_8900'], [/авидорск/i, 'shop_icon_31'],
-  [/билет|инферно/i, 'use_13_238'], [/знак/i, 'tokenitem_150'], [/титул/i, 'use_5_156'], [/фон/i, 'use_13_43'],
+  [/билет|инферно|тартар/i, 'use_13_238'], [/феон/i, 'feon'], [/боеприпас/i, 'ammo'], [/зелье/i, 'potion'], [/эликсир/i, 'elixir'], [/знак/i, 'tokenitem_150'], [/титул/i, 'use_5_156'], [/фон/i, 'use_13_43'],
 ];
-function rewardIcon(text) {
+export function rewardIcon(text) {
   const key = text.includes(':') ? text.split(':').slice(1).join(':') : text;
   const hit = RI.find(([re]) => re.test(key)) || RI.find(([re]) => re.test(text));
   return hit ? `<span class="rw-ico item"><img src="assets/items/${hit[1]}.webp" alt="" loading="lazy"></span>` : '<span class="rw-ico"><iconify-icon icon="game-icons:swap-bag"></iconify-icon></span>';
