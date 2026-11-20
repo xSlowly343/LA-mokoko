@@ -60,7 +60,8 @@ export const GUIDES = [
 
 <h3>Что важно знать новичку</h3>
 <ul>
-  <li><b>Экспедиция</b> — облегчённый режим рейда Теней: проходится <b>в одиночку или группой из 4 или 8 человек</b> — состав зависит от рейда. Золото и ресурсы как в обычном режиме, но нет аукциона в конце и не выдаётся энергия эсдо.<span class="src" data-src="news-2613"></span></li>
+  <li><b>Экспедиция</b> — облегчённый режим рейдов Теней. В «Зерке» (рейд на 4) — подбор групп от 1 до 4 игроков.<span class="src" data-src="news-2620"></span> В «Бельгардине» (рейд на 8) — соло, «Найти группу» на 1–7 игроков или готовый рейд из 8.<span class="src" data-src="news-2676"></span> Золото и ресурсы как в обычном режиме, но нет аукциона и энергии эсдо.<span class="src" data-src="news-2613"></span></li>
+  <li><b>Размер группы фиксирован:</b> рейд на 8 человек вчетвером не пройти. Соло-режим есть у Экидны, Камена и рейдов Казероса (Акты I–IV и Финал) — подробности в разделе <a href="#/bosses">«Боссы»</a>.<span class="src" data-src="news-2612"></span></li>
   <li>Для «Бельгардина» и «Сакра-Финистрии» нужно пройти задание Кадарума <b>«Когда затих колокол»</b>.<span class="src" data-src="news-2676"></span></li>
   <li>Новый слот снаряжения — <b>манжеты</b>: выдаются за первое прохождение 2-й фазы «Бельгардина» на любой сложности, слот открывается с 1750.<span class="src" data-src="news-2676"></span></li>
   <li>Регион <b>архипелаг Кадарум</b> требует 1700 и задание «Сквозь любые бури».<span class="src" data-src="history"></span></li>
@@ -94,6 +95,98 @@ export const GUIDES = [
 <h3>Чего мы пока не знаем точно</h3>
 <p>Официальная таблица золота за рейды есть в Энциклопедии на lostark.ru, но автоматически прочитать её не удалось. Поэтому золото за врата обычных рейдов в калькуляторе <b>вводится вручную</b> — берите цифры из превью наград в окне входа в рейд. Лимит персонажей-получателей золота для текущего патча тоже не нашли в источниках.</p>
 <a class="btn" href="#/gold">Открыть калькулятор золота →</a>
+`
+  },
+  {
+    id: 'gold-howto',
+    cover: 'assets/items/use_13_34.webp',
+    title: 'Как заработать золото',
+    tag: 'Экономика',
+    icon: '◉',
+    minutes: 5,
+    updated: '2026-11-20',
+    summary: 'Все источники золота по официальной Энциклопедии и новостям: рейды, экстримы, события, биржа.',
+    sources: ['wiki-currency', 'wiki-exchange', 'wiki-single', 'news-2695', 'news-2699', 'changelist', 'news-2500'],
+    body: `
+<h3>Три вида золота</h3>
+<div class="cards3">
+  <div class="mini-card"><img class="mc-img" src="assets/items/use_13_34.webp" alt=""><b class="hl-gold">Обычное</b><p>Общее на Наследие, им пользуется любой ваш персонаж.<span class="src" data-src="wiki-currency"></span></p></div>
+  <div class="mini-card"><img class="mc-img" src="assets/items/use_13_34.webp" alt="" style="filter:hue-rotate(220deg)"><b class="hl-purple">Персональное</b><p>Тратит только персонаж, который его заработал. Основной источник — «Инферно» Пантеона героев.<span class="src" data-src="wiki-currency"></span></p></div>
+  <div class="mini-card"><img class="mc-img" src="assets/items/use_13_34.webp" alt="" style="filter:grayscale(1)"><b class="hl-blue">Лимитированное</b><p>За одиночные рейды и события. Это не эквивалент обычного золота, им нельзя оплачивать списания.<span class="src" data-src="wiki-currency"></span></p></div>
+</div>
+
+<h3>Откуда берётся обычное золото</h3>
+<ul class="icon-list">
+  <li><iconify-icon icon="game-icons:crossed-swords"></iconify-icon><span><b>Рейды</b> обычного и героического режима — главный источник. Сколько даёт каждый рейд, смотрите в окне входа и в разделе <a href="#/bosses">«Боссы»</a>.<span class="src" data-src="wiki-currency"></span></span></li>
+  <li><iconify-icon icon="game-icons:present"></iconify-icon><span><b>«Подарки Судьбы»</b> — в активностях выше 1580 уровня снаряжения.<span class="src" data-src="wiki-currency"></span></span></li>
+  <li><iconify-icon icon="game-icons:compass"></iconify-icon><span><b>Острова Компаса Процея.</b><span class="src" data-src="wiki-currency"></span></span></li>
+  <li><iconify-icon icon="game-icons:shaking-hands"></iconify-icon><span><b>Торговля с игроками</b> и некоторые задания.<span class="src" data-src="wiki-currency"></span></span></li>
+</ul>
+
+<h3>Золото сверх недельного лимита</h3>
+<ul class="icon-list">
+  <li><iconify-icon icon="game-icons:fire-ring"></iconify-icon><span><b>Экстрим «Акт III»</b> (18.11–16.12.2026): 20 000 на обычном и 50 000 на героическом, раз в неделю на Наследие. Не учитывается в лимите персонажа.<span class="src" data-src="news-2695"></span></span></li>
+  <li><iconify-icon icon="game-icons:hourglass"></iconify-icon><span><b>«Эхо погибели»</b> (до 13.01.2027): слиток на 10 000 (обычный) или 20 000 (героический) за первое прохождение каждого из 6 этапов, на каждого персонажа. Лимит золота не действует.<span class="src" data-src="news-2699"></span></span></li>
+  <li><iconify-icon icon="game-icons:cupcake"></iconify-icon><span><b>«Легион вкусняшек»</b> (до 16.12.2026): «Золотой пирожок» может дать слиток на 10 000–300 000 <span class="hl-purple">персонального</span> золота.<span class="src" data-src="news-2699"></span></span></li>
+</ul>
+
+<h3>Биржа: кристаллы ↔ золото</h3>
+<p>На бирже можно продавать кристаллы за золото и наоборот. Конвертация кристаллов в золото — без комиссии, а рекомендуемая ставка считается по самым выгодным предложениям на бирже.<span class="src" data-src="wiki-exchange"></span></p>
+
+<h3>Подводные камни</h3>
+<ul>
+  <li><b>Одиночный режим</b> даёт меньше золота и больше ресурсов.<span class="src" data-src="wiki-single"></span></li>
+  <li>Со старых рейдов золото <b>перестаёт начисляться</b> после определённого уровня: Волдан и Белакис — с 1600, Ку-Сатот — с 1610, Аврельсуд (Владыка) — с 1620.<span class="src" data-src="wiki-single"></span></li>
+  <li>Всё золото из «Собора Сакра-Финистриа» — <span class="hl-purple">персональное</span> (с 17.06.2026).<span class="src" data-src="changelist"></span></li>
+  <li>Золото за рейды меняли 10.06 и 16.09.2026 — <b>цифры из старых гайдов не годятся</b>.<span class="src" data-src="changelist"></span></li>
+</ul>
+<a class="btn" href="#/gold">Посчитать доход за неделю →</a>
+`
+  },
+  {
+    id: 'materials',
+    cover: 'assets/items/use_13_249.webp',
+    title: 'Где брать материалы и предметы',
+    tag: 'Экономика',
+    icon: '⚒',
+    minutes: 5,
+    updated: '2026-11-20',
+    summary: 'Кристаллы и камни судьбы, руниты, манжеты — откуда они берутся по официальным новостям.',
+    sources: ['news-2681', 'news-2546', 'news-2676', 'news-2612', 'news-2699', 'news-2500', 'wiki-currency'],
+    body: `
+<h3>Материалы для закалки</h3>
+<div class="item-row">
+  <img src="assets/items/use_13_249.webp" alt="" title="Оружейный кристалл судьбы"><img src="assets/items/use_13_250.webp" alt="" title="Защитный кристалл судьбы">
+  <img src="assets/items/use_13_251.webp" alt="" title="Большой камень судьбы"><img src="assets/items/use_12_92.webp" alt="" title="Мешочек с осколками судьбы">
+</div>
+<p><b>Оружейные и защитные кристаллы судьбы, большие камни судьбы, осколки судьбы.</b></p>
+<ul class="icon-list">
+  <li><iconify-icon icon="game-icons:spiked-dragon-head"></iconify-icon><span><b>Мировой босс</b> — с 1770 уровня выпадает больше материалов для закалки (кристаллов судьбы и больших камней судьбы).<span class="src" data-src="news-2681"></span></span></li>
+  <li><iconify-icon icon="game-icons:portal"></iconify-icon><span><b>Разломы Хаоса</b> — с 21.10.2026 добавлена новая сложность для 1770+.<span class="src" data-src="news-2681"></span></span></li>
+  <li><iconify-icon icon="game-icons:magic-portal"></iconify-icon><span><b>Брешь Хаоса</b> — с 1730 уровня после обучающего задания. Награды персональные: материалы закалки, руниты и с шансом «Подарки судьбы» — в том числе сундуки с <b>передаваемыми</b> материалами.<span class="src" data-src="news-2546"></span></span></li>
+  <li><iconify-icon icon="game-icons:hourglass"></iconify-icon><span><b>События</b> — например, «Эхо погибели» даёт кристаллы и камни судьбы за каждый этап (подробности в <a href="#/events">«Событиях»</a>).<span class="src" data-src="news-2699"></span></span></li>
+</ul>
+
+<h3>Руниты</h3>
+<div class="item-row"><img src="assets/items/shop_icon_9963.webp" alt="" title="Сундук с эпическим рунитом"><img src="assets/items/use_13_201.webp" alt="" title="Сертификат на сброс рунита"></div>
+<ul class="icon-list">
+  <li><iconify-icon icon="game-icons:magic-portal"></iconify-icon><span><b>Брешь Хаоса</b>.<span class="src" data-src="news-2546"></span></span></li>
+  <li><iconify-icon icon="game-icons:fire-ring"></iconify-icon><span>Награды за первые прохождения экстримов и событий («Эхо погибели», «Падение Бельгардина»).<span class="src" data-src="news-2695"></span></span></li>
+</ul>
+
+<h3>Персональное золото и «Инферно»</h3>
+<p>«Инферно» Пантеона героев — главный источник <span class="hl-purple">персонального золота</span>.<span class="src" data-src="wiki-currency"></span> Ключи и награды режима менялись по сезонам Пантеона — сверяйтесь с окном Пантеона в игре.</p>
+
+<h3>Манжеты (новый слот)</h3>
+<p>Выдаются за первое прохождение 2-й фазы «Бельгардина» на любой сложности, слот открывается с 1750. Для закалки нужны осколки судьбы, оружейные и защитные кристаллы, большие камни судьбы и огромный авидорский кристалл.<span class="src" data-src="news-2676"></span></p>
+
+<h3>Что важно помнить</h3>
+<ul>
+  <li><b>Энергию эсдо</b> не получить в одиночном режиме и в «Экспедиции».<span class="src" data-src="news-2612"></span></li>
+  <li>Попытки входа в одиночный и другие режимы рейда <b>общие</b> для персонажа.<span class="src" data-src="news-2612"></span></li>
+  <li>Награды за Чертоги Хаоса, Крузанские фронты, рейды на Хранителей, Разломы Хаоса и мировых боссов переработаны 11.02.2026 — старые таблицы наград не годятся.<span class="src" data-src="news-2500"></span></li>
+</ul>
+<p class="muted" style="font-size:12px">Иконки предметов: lostarkcodex.com.</p>
 `
   },
   {

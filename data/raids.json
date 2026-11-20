@@ -12,13 +12,28 @@
       "short": "Экстрим Акт III",
       "type": "Экстрим-рейд",
       "party": 8,
-      "available": { "from": "2026-11-18", "to": "2026-12-16" },
+      "available": {
+        "from": "2026-11-18",
+        "to": "2026-12-16"
+      },
       "perRoster": true,
       "outsideCharLimit": true,
       "notes": "1 раз в неделю на Наследие. Не учитывается в лимите золота персонажа. Золото выдаётся, даже если персонаж не назначен получателем. Кошмарной сложности нет. На момент анонса контент был в тестировании, цифры могли поменяться.",
       "difficulties": [
-        { "id": "normal", "name": "Обычный", "ilvl": 1730, "gold": 20000, "source": "news-2695" },
-        { "id": "hard", "name": "Героический", "ilvl": 1770, "gold": 50000, "source": "news-2695" }
+        {
+          "id": "normal",
+          "name": "Обычный",
+          "ilvl": 1730,
+          "gold": 20000,
+          "source": "news-2695"
+        },
+        {
+          "id": "hard",
+          "name": "Героический",
+          "ilvl": 1770,
+          "gold": 50000,
+          "source": "news-2695"
+        }
       ]
     },
     {
@@ -27,13 +42,39 @@
       "short": "Бельгардин",
       "type": "Рейд Теней",
       "party": 8,
-      "available": { "from": "2026-10-21" },
-      "notes": "Нужно задание Кадарума «Когда затих колокол». 2 фазы. В «Экспедиции» нет аукциона и энергии эсдо. Манжеты — за первое прохождение 2 фазы на любой сложности.",
+      "available": {
+        "from": "2026-10-21"
+      },
+      "notes": "Рейд на 8. Нужно задание Кадарума «Когда затих колокол». «Экспедиция» — соло, «Найти группу» на 1–7 или готовый рейд из 8; без аукциона и энергии эсдо.",
       "difficulties": [
-        { "id": "exp", "name": "Экспедиция", "ilvl": 1750, "gold": null, "source": "news-2676" },
-        { "id": "normal", "name": "Обычный", "ilvl": 1750, "gold": null, "source": "news-2676" },
-        { "id": "hard", "name": "Героический", "ilvl": 1770, "gold": null, "source": "news-2676" },
-        { "id": "nightmare", "name": "Кошмарный", "ilvl": 1780, "gold": null, "source": "news-2676" }
+        {
+          "id": "exp",
+          "name": "Экспедиция",
+          "ilvl": 1750,
+          "gold": null,
+          "source": "news-2676"
+        },
+        {
+          "id": "normal",
+          "name": "Обычный",
+          "ilvl": 1750,
+          "gold": null,
+          "source": "news-2676"
+        },
+        {
+          "id": "hard",
+          "name": "Героический",
+          "ilvl": 1770,
+          "gold": null,
+          "source": "news-2676"
+        },
+        {
+          "id": "nightmare",
+          "name": "Кошмарный",
+          "ilvl": 1780,
+          "gold": null,
+          "source": "news-2676"
+        }
       ]
     },
     {
@@ -42,13 +83,39 @@
       "short": "Зерка",
       "type": "Рейд Теней",
       "party": 8,
-      "available": { "from": "2026-04-15" },
-      "notes": "«Экспедиция» проходится соло или группой из 4 или 8 человек (зависит от рейда); золото и ресурсы такие же, как в обычном режиме, но без аукциона. Требования по уровню в найденных источниках не указаны.",
+      "available": {
+        "from": "2026-04-15"
+      },
+      "notes": "Рейд на 4. «Экспедиция» — подбор групп от 1 до 4 игроков; золото и ресурсы как в обычном режиме, но без аукциона.",
       "difficulties": [
-        { "id": "exp", "name": "Экспедиция", "ilvl": null, "gold": null, "source": "news-2613" },
-        { "id": "normal", "name": "Обычный", "ilvl": null, "gold": null, "source": "history" },
-        { "id": "hard", "name": "Героический", "ilvl": null, "gold": null, "source": "history" },
-        { "id": "nightmare", "name": "Кошмарный", "ilvl": null, "gold": null, "source": "history" }
+        {
+          "id": "exp",
+          "name": "Экспедиция",
+          "ilvl": null,
+          "gold": null,
+          "source": "news-2613"
+        },
+        {
+          "id": "normal",
+          "name": "Обычный",
+          "ilvl": null,
+          "gold": null,
+          "source": "history"
+        },
+        {
+          "id": "hard",
+          "name": "Героический",
+          "ilvl": null,
+          "gold": null,
+          "source": "history"
+        },
+        {
+          "id": "nightmare",
+          "name": "Кошмарный",
+          "ilvl": null,
+          "gold": null,
+          "source": "history"
+        }
       ]
     },
     {
@@ -57,12 +124,32 @@
       "short": "Сакра-Финистриа",
       "type": "Подземелье Бездны",
       "personalGold": true,
-      "available": { "from": "2026-06-10" },
+      "available": {
+        "from": "2026-06-10"
+      },
       "notes": "Открывается после сюжета Кадарума и задания «Когда затих колокол». С 17.06.2026 всё золото отсюда — персональное (только для заработавшего персонажа). 3 сложности; названия и уровни в источниках не указаны.",
       "difficulties": [
-        { "id": "d1", "name": "Сложность 1", "ilvl": null, "gold": null, "source": "changelist" },
-        { "id": "d2", "name": "Сложность 2", "ilvl": null, "gold": null, "source": "changelist" },
-        { "id": "d3", "name": "Сложность 3", "ilvl": null, "gold": null, "source": "changelist" }
+        {
+          "id": "d1",
+          "name": "Сложность 1",
+          "ilvl": null,
+          "gold": null,
+          "source": "changelist"
+        },
+        {
+          "id": "d2",
+          "name": "Сложность 2",
+          "ilvl": null,
+          "gold": null,
+          "source": "changelist"
+        },
+        {
+          "id": "d3",
+          "name": "Сложность 3",
+          "ilvl": null,
+          "gold": null,
+          "source": "changelist"
+        }
       ]
     },
     {
@@ -72,7 +159,13 @@
       "type": "Другое",
       "notes": "Для рейдов, которых нет в списке (например, «Акт IV. Цитадель рока», «Финал. Судный день»). Название и золото вводятся вручную.",
       "difficulties": [
-        { "id": "any", "name": "—", "ilvl": null, "gold": null, "source": null }
+        {
+          "id": "any",
+          "name": "—",
+          "ilvl": null,
+          "gold": null,
+          "source": null
+        }
       ]
     }
   ]

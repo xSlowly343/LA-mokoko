@@ -36,6 +36,18 @@
       "group": "ru"
     },
     {
+      "id": "codex",
+      "group": "global",
+      "title": "Lost Ark Codex",
+      "url": "https://lostarkcodex.com/ru/",
+      "domain": "lostarkcodex.com",
+      "icon": "▤",
+      "kind": "База данных",
+      "desc": "База предметов, рейдов, достижений и NPC с русскими названиями и иконками. Отсюда взяты иконки наград на этом сайте.",
+      "note": "Фанатская база; часть данных может отличаться от РУ-версии.",
+      "checked": "2026-11-20"
+    },
+    {
       "id": "nexus",
       "group": "global",
       "title": "Lost Ark Nexus",

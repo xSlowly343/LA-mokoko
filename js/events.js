@@ -7,21 +7,24 @@ const DAY = 864e5;
 const startOf = (iso) => new Date(iso + 'T00:00:00').getTime();
 const endOf = (iso) => startOf(iso) + DAY; // конец дня end
 let timer;
-// иконка награды по ключевому слову
+// Иконки наград — предметы из базы lostarkcodex.com/ru (assets/items). Порядок важен: сначала точные.
 const RI = [
-  [/слит|номинал/i, 'game-icons:gold-bar', '#f2c94c'], [/золот/i, 'game-icons:two-coins', '#f2c94c'], [/серебр/i, 'game-icons:coins', '#cfd6e0'],
-  [/рунит/i, 'game-icons:gem-pendant', '#b48cff'], [/сертификат/i, 'game-icons:scroll-unfurled', '#e8d5a6'], [/колод/i, 'game-icons:card-random', '#ff9a3c'],
-  [/кристалл/i, 'game-icons:crystal-growth', '#6fc0ff'], [/камень/i, 'game-icons:stone-block', '#9fb3c8'], [/осколк/i, 'game-icons:crystal-cluster', '#8fd16a'],
-  [/гравир/i, 'game-icons:book-cover', '#ffb05c'], [/жетон/i, 'game-icons:medal', '#e0c070'], [/катализ/i, 'game-icons:fizzing-flask', '#4fd1c5'],
-  [/энерги/i, 'game-icons:crystal-ball', '#6fa8ff'], [/наковальн/i, 'game-icons:anvil', '#c0c0c0'], [/искр/i, 'game-icons:sparkles', '#ffd84a'],
-  [/знак/i, 'game-icons:rune-stone', '#d29bff'], [/короб/i, 'game-icons:wooden-crate', '#c98d4a'], [/билет/i, 'game-icons:ticket', '#ff7b7b'],
-  [/эликсир|зель/i, 'game-icons:potion-ball', '#ff6bb5'], [/титул/i, 'game-icons:laurel-crown', '#f2c94c'], [/фон/i, 'game-icons:photo-camera', '#9fd0ff'],
-  [/сундук|шкатулк|ларец|сумк|мешоч|сундучок/i, 'game-icons:locked-chest', '#e0a050'], [/достижени/i, 'game-icons:trophy-cup', '#f2c94c'],
+  [/короб[^;]*кошмар/i, 'use_11_163'], [/короб[^;]*героич/i, 'use_11_162'], [/короб/i, 'use_11_161'],
+  [/персонального золота|слиток|номинал/i, 'use_13_34'], [/золот/i, 'use_13_34'], [/серебр/i, 'use_14_24'],
+  [/сертификат на сброс рунита/i, 'use_13_201'], [/рунит/i, 'shop_icon_9963'],
+  [/шулерская колода/i, 'use_11_2'], [/колода/i, 'shop_icon_5783'],
+  [/оружейный кристалл судьбы/i, 'use_13_249'], [/защитный кристалл судьбы/i, 'use_13_250'], [/камень судьбы/i, 'use_13_251'],
+  [/осколк/i, 'use_12_92'], [/оружейными кристаллами/i, 'use_14_11'], [/защитными кристаллами/i, 'use_14_12'],
+  [/драгоценн/i, 'use_14_13'], [/катализ/i, 'use_12_177'], [/сундучок мастера закалки|закалки/i, 'use_14_10'],
+  [/сокровище вечного солнца/i, 'use_7_26'], [/искр\S* хаоса/i, 'use_4_227'], [/искр/i, 'use_13_220'],
+  [/гравир|эскиз/i, 'all_quest_02_208'], [/браслет/i, 'use_10_249'], [/ядра/i, 'use_4_224'], [/наковальн/i, 'shop_icon_9'],
+  [/авидорский сундук с кристаллами судьбы/i, 'shop_icon_8900'], [/авидорск/i, 'shop_icon_31'],
+  [/билет|инферно/i, 'use_13_238'], [/знак/i, 'tokenitem_150'], [/титул/i, 'use_5_156'], [/фон/i, 'use_13_43'],
 ];
 function rewardIcon(text) {
-  const key = text.split(':').pop();
+  const key = text.includes(':') ? text.split(':').slice(1).join(':') : text;
   const hit = RI.find(([re]) => re.test(key)) || RI.find(([re]) => re.test(text));
-  return hit ? `<span class="rw-ico" style="--ri:${hit[2]}"><iconify-icon icon="${hit[1]}"></iconify-icon></span>` : '<span class="rw-ico"><iconify-icon icon="game-icons:swap-bag"></iconify-icon></span>';
+  return hit ? `<span class="rw-ico item"><img src="assets/items/${hit[1]}.webp" alt="" loading="lazy"></span>` : '<span class="rw-ico"><iconify-icon icon="game-icons:swap-bag"></iconify-icon></span>';
 }
 
 function left(ms) {

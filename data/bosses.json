@@ -28,7 +28,10 @@
        "ilvl": 1740
       }
      ],
-     "src": "news-2541"
+     "src": "news-2541",
+     "party": 4,
+     "partySrc": "news-2541",
+     "expedition": "Экспедиция: подбор групп от 1 до 4 игроков"
     },
     {
      "id": "belgardin",
@@ -40,7 +43,6 @@
       {
        "name": "Экспедиция",
        "ilvl": 1750,
-       "note": "соло или группа 4/8",
        "color": "#8fd16a"
       },
       {
@@ -59,7 +61,10 @@
        "ilvl": 1780
       }
      ],
-     "src": "news-2676"
+     "src": "news-2676",
+     "party": 8,
+     "partySrc": "news-2676",
+     "expedition": "Экспедиция с 1750: соло, «Найти группу» на 1–7 игроков или готовый рейд из 8"
     }
    ]
   },
@@ -90,7 +95,8 @@
        "note": "соревновательный режим"
       }
      ],
-     "src": "news-2427"
+     "src": "news-2427",
+     "solo": 1710
     },
     {
      "id": "armog",
@@ -115,7 +121,8 @@
        "goldWeak": true
       }
      ],
-     "src": "news-2421"
+     "src": "news-2421",
+     "solo": 1700
     },
     {
      "id": "mordrum",
@@ -157,7 +164,8 @@
        }
       }
      ],
-     "src": "wiki-mordum"
+     "src": "wiki-mordum",
+     "solo": 1680
     },
     {
      "id": "avrelsud-2",
@@ -201,7 +209,8 @@
        }
       }
      ],
-     "src": "wiki-single"
+     "src": "wiki-single",
+     "solo": 1670
     },
     {
      "id": "egir",
@@ -213,12 +222,12 @@
       {
        "name": "Обычный",
        "color": "#56aadf",
-       "ilvl": 1660,
-       "ilvlNote": "по уровню одиночного режима"
+       "ilvl": 1660
       },
       {
        "name": "Героический",
-       "color": "#f1bb50"
+       "color": "#f1bb50",
+       "ilvl": 1680
       },
       {
        "name": "Экстрим",
@@ -248,7 +257,10 @@
        }
       }
      ],
-     "src": "wiki-single"
+     "src": "wiki-single",
+     "party": 8,
+     "partySrc": "wiki-egir",
+     "solo": 1660
     },
     {
      "id": "echidna",
@@ -268,7 +280,10 @@
        "ilvl": 1630
       }
      ],
-     "src": "news-1982"
+     "src": "news-1982",
+     "party": 8,
+     "partySrc": "wiki-ekidna",
+     "solo": 1620
     }
    ]
   },
@@ -320,7 +335,10 @@
        }
       }
      ],
-     "src": "wiki-kamen"
+     "src": "wiki-kamen",
+     "party": 8,
+     "partySrc": "wiki-kamen",
+     "solo": 1610
     },
     {
      "id": "illiakan",
@@ -378,7 +396,9 @@
        "color": "#a82e2e"
       }
      ],
-     "src": null
+     "src": null,
+     "party": 4,
+     "partySrc": "wiki-kusatot"
     },
     {
      "id": "belakis",
@@ -400,7 +420,9 @@
        "color": "#a82e2e"
       }
      ],
-     "src": null
+     "src": null,
+     "party": 8,
+     "partySrc": "wiki-belakis"
     },
     {
      "id": "voldan",
@@ -433,7 +455,9 @@
        }
       }
      ],
-     "src": null
+     "src": null,
+     "party": 8,
+     "partySrc": "wiki-voldan"
     }
    ]
   },
@@ -523,10 +547,13 @@
        "ilvl": 1620
       }
      ],
-     "src": "wiki-behemoth"
+     "src": "wiki-behemoth",
+     "party": 16,
+     "partySrc": "news-2058"
     }
    ]
   }
  ],
- "goldNote": "Золото указано только там, где цифра подтверждена. Официальная таблица — lostark.ru/wiki/Gold-table (16.09.2026 золото за часть рейдов уменьшили)."
+ "goldNote": "Золото указано только там, где цифра подтверждена. Официальная таблица — lostark.ru/wiki/Gold-table (16.09.2026 золото за часть рейдов уменьшили).",
+ "partyNote": "Состав группы фиксирован: в рейд на 8 человек нельзя пойти вчетвером. Соло и «Экспедиция» есть не у всех рейдов."
 }

@@ -47,10 +47,14 @@ export async function renderBosses(page, bossId) {
             <article class="boss-card frame" id="boss-${b.id}" style="--bc:${esc(b.color || '#c9a45c')}">
               <div class="boss-media">
                 <video muted loop playsinline preload="none" poster="assets/bosses/${b.id}-poster.webp" data-src="assets/bosses/${b.id}.webm"></video>
-                <img class="boss-icon" src="assets/bosses/${b.id}-icon.webp" alt="">
               </div>
               <div class="boss-body">
                 <h3>${esc(b.name)}</h3>
+                <div class="boss-tags">
+                  ${b.party ? `<span class="btag party" title="Размер группы — фиксированный"><iconify-icon icon="game-icons:three-friends"></iconify-icon>${b.party} игроков</span>` : ''}
+                  ${b.solo ? `<span class="btag solo" title="Одиночный режим: меньше золота, нет энергии эсдо"><iconify-icon icon="game-icons:person"></iconify-icon>Соло с ${b.solo}</span>` : ''}
+                  ${b.expedition ? `<span class="btag exp"><iconify-icon icon="game-icons:backup"></iconify-icon>${esc(b.expedition)}</span>` : ''}
+                </div>
                 <div class="boss-modes">${b.modes.filter((m) => !m.extreme).map(modeChip).join('')}</div>
                 ${b.modes.filter((m) => m.extreme).map(extremeBlock).join('')}
                 ${b.src && sources[b.src] ? `<a class="m-src" href="${esc(sources[b.src].url)}" target="_blank" rel="noopener">ⓘ ${esc(sources[b.src].title)}</a>` : ''}
@@ -60,7 +64,7 @@ export async function renderBosses(page, bossId) {
             </article>`).join('')}
         </div>
       </section>`).join('')}
-    <p class="muted" style="font-size:12px">${esc(data.goldNote)} Видео и изображения: © Smilegate / lostark.ru.</p>`;
+    <p class="muted" style="font-size:12px">${esc(data.partyNote)} ${esc(data.goldNote)} Видео и изображения: © Smilegate / lostark.ru.</p>`;
 
   // видео играют, только когда на экране
   io?.disconnect();
