@@ -6,11 +6,8 @@ import { load, save, esc, fmtDate, getJSON } from './store.js';
 import { initBackground } from './bg.js';
 import { initMascot, say, hide as hideBubble } from './mascot.js';
 import { renderUI } from './ui-screens.js';
-import { renderGold } from './gold.js';
-import { renderChecklist } from './checklist.js';
 import { renderEvents, liveEvents, left, endOf } from './events.js';
 import { renderMechanics, MECH_INDEX } from './mechanics.js';
-import { renderClasses, classIndex } from './classes.js';
 import { renderBosses, bossIndex } from './bosses.js';
 import { renderPromo, activePromoCount } from './promo.js';
 import { renderNews, getNews, newsCard, isNew, markNewInNav } from './news.js';
@@ -57,13 +54,10 @@ function pageHome(page) {
     <div class="tiles">
       <a class="tile frame" href="#/ui"><div class="t-ico">◈</div><h3>Интерфейс</h3><p>Нажимайте на элементы экрана и узнавайте, что за что отвечает.</p></a>
       <a class="tile frame" href="#/guides"><div class="t-ico">❖</div><h3>Гайды</h3><p>Только свежие патчи, у каждого факта источник и дата.</p></a>
-      <a class="tile frame" href="#/gold"><div class="t-ico">◉</div><h3>Золото</h3><p>Сколько золота принесёт ваше Наследие за неделю.</p></a>
-      <a class="tile frame" href="#/checklist"><div class="t-ico">✓</div><h3>Чек-лист</h3><p>Ежедневные и еженедельные дела с автосбросом.</p></a>
       <a class="tile frame" href="#/mechanics"><div class="t-ico">✴</div><h3>Механики</h3><p>Изнурение, разрушение, контратака, парирование — в анимациях.</p></a>
       <a class="tile frame" href="#/events"><div class="t-ico">☄</div><h3>События</h3><p>Что идёт сейчас, сколько осталось и какие награды.</p></a>
       <a class="tile frame" href="#/progress"><div class="t-ico">⇪</div><h3>Прокачка</h3><p>Интерактивный путь 1705 → 1730: отвечайте на вопросы — подскажем шаг.</p></a>
-      <a class="tile frame" href="#/classes"><div class="t-ico">⚔</div><h3>Классы</h3><p>30 классов в 7 архетипах — официальные описания.</p></a>
-      <a class="tile frame" href="#/bosses"><div class="t-ico">☠</div><h3>Боссы</h3><p>Рейды и боссы с роликами и датами первых побед на РУ.</p></a>
+      <a class="tile frame" href="#/bosses"><div class="t-ico">☠</div><h3>Рейды по ГС</h3><p>Какие рейды ходить на вашем уровне и сколько БС нужно в подборе.</p></a>
     </div>
     <a class="promo-strip frame" href="#/promo" id="promoStrip"><iconify-icon icon="game-icons:present"></iconify-icon><span><b>Промокоды</b><small id="promoCnt">официальные коды и быстрая активация</small></span><span class="ps-go">Открыть →</span></a>
     <section class="section">
@@ -73,10 +67,6 @@ function pageHome(page) {
     <section class="section">
       <div class="section-head"><h2>Сейчас в игре</h2><a href="#/events">Все события →</a></div>
       <div class="ev-strip" id="homeEvents"></div>
-    </section>
-    <section class="section">
-      <div class="section-head"><h2>Начните с этого</h2><a href="#/guides">Все гайды →</a></div>
-      <div class="guide-grid">${GUIDES.slice(0, 3).map((g) => guideCard(g, read)).join('')}</div>
     </section>
     <section class="section" id="links">
       <div class="section-head"><h2>Полезные ссылки</h2><a href="#/sources">Все источники →</a></div>
@@ -93,25 +83,39 @@ function pageHome(page) {
 }
 
 function linkBlock(d) {
-  const groups = Object.entries(d.groups || { ru: 'Все' });
-  return `<div class="filters link-filters">
-      <button class="chip on" data-lg="all">Все · ${d.links.length}</button>
-      ${groups.map(([k, v]) => `<button class="chip" data-lg="${k}">${esc(v)} · ${d.links.filter((l) => l.group === k).length}</button>`).join('')}
+  const P = d.purposes || [];
+  const L = d.langs || {};
+  return `<div class="lk-filters">
+      <div class="filters lk-purpose">
+        <button class="chip on" data-lp="all">Все</button>
+        ${P.map((p) => `<button class="chip" data-lp="${esc(p)}">${esc(p)} <small>${d.links.filter((l) => (l.tags || []).includes(p)).length}</small></button>`).join('')}
+      </div>
+      <div class="lk-lang"><span>Язык:</span>
+        <button class="on" data-ll="all">все</button>${Object.entries(L).map(([k, v]) => `<button data-ll="${k}">${v}</button>`).join('')}
+      </div>
     </div>${linkCards(d.links)}`;
 }
 function wireLinkFilter(root) {
-  root.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-lg]'); if (!b) return;
-    root.querySelectorAll('[data-lg]').forEach((x) => x.classList.toggle('on', x === b));
+  let purpose = 'all', lang = 'all';
+  const apply = () => {
     const cards = [...root.querySelectorAll('.link-card')];
-    cards.forEach((c) => { c.hidden = !(b.dataset.lg === 'all' || c.dataset.group === b.dataset.lg); });
+    cards.forEach((c) => {
+      const tags = (c.dataset.tags || '').split('|');
+      c.hidden = !((purpose === 'all' || tags.includes(purpose)) && (lang === 'all' || c.dataset.group === lang));
+    });
     anime({ targets: cards.filter((c) => !c.hidden), opacity: [0, 1], translateY: [10, 0], delay: anime.stagger(40), duration: 350, easing: 'easeOutQuad' });
+  };
+  root.addEventListener('click', (e) => {
+    const p = e.target.closest('[data-lp]');
+    if (p) { purpose = p.dataset.lp; root.querySelectorAll('[data-lp]').forEach((x) => x.classList.toggle('on', x === p)); apply(); return; }
+    const l = e.target.closest('[data-ll]');
+    if (l) { lang = l.dataset.ll; root.querySelectorAll('[data-ll]').forEach((x) => x.classList.toggle('on', x === l)); apply(); }
   });
 }
 function linkCards(links) {
   return `<div class="link-grid">${links.map((l) => `
-    <a class="link-card frame" data-group="${esc(l.group || '')}" href="${esc(l.url)}" target="_blank" rel="noopener">
-      <div class="lc-top"><span class="lc-ico">${esc(l.icon)}</span><span class="tag">${esc(l.kind)}</span></div>
+    <a class="link-card frame" data-group="${esc(l.group || '')}" data-tags="${esc((l.tags || []).join('|'))}" href="${esc(l.url)}" target="_blank" rel="noopener">
+      <div class="lc-top"><span class="lc-ico">${esc(l.icon)}</span><span class="lc-tags">${(l.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</span></div>
       <h3>${esc(l.title)}</h3>
       <p>${esc(l.desc)}</p>
       ${l.note ? `<p class="muted lc-note">${esc(l.note)}</p>` : ''}
@@ -206,12 +210,9 @@ const routes = {
   '': pageHome,
   guides: (p, id) => (id ? pageGuide(p, id) : pageGuides(p)),
   ui: (p, id) => renderUI(p, id),
-  gold: (p) => renderGold(p),
-  checklist: (p) => renderChecklist(p),
   sources: pageSources,
   mechanics: (p, id) => renderMechanics(p).then(() => id && setTimeout(() => jumpTo('#m-' + id), 50)),
   events: (p) => renderEvents(p),
-  classes: (p, id) => renderClasses(p, id),
   bosses: (p, id) => renderBosses(p, id),
   promo: (p) => renderPromo(p),
   news: (p) => renderNews(p),
@@ -234,7 +235,7 @@ let lastSection = null;
 async function route() {
   const [, section = '', id] = (location.hash || '#/').split('/');
   const fn = routes[section] || pageHome;
-  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources', 'classes', 'bosses', 'promo', 'news', 'progress'].includes(section)) || (a.dataset.nav === 'nav-more' && ['checklist', 'sources', 'promo', 'ui', 'gold'].includes(section))));
+  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'sources', 'bosses', 'promo', 'news', 'progress', 'ui'].includes(section)) || (a.dataset.nav === 'nav-more' && ['sources', 'promo', 'ui'].includes(section))));
   closeSheet();
   srcTips.forEach((t) => t.destroy()); srcTips = [];
   const first = !routed;
@@ -261,23 +262,21 @@ async function initSearch() {
   const dlg = document.getElementById('searchDlg');
   const input = document.getElementById('searchInput');
   const out = document.getElementById('searchResults');
-  const [raids, screens, links] = await Promise.all([getJSON('data/raids.json').catch(() => ({ raids: [] })), getJSON('data/screens.json').catch(() => ({ screens: [] })), getJSON('data/links.json').catch(() => ({ links: [] }))]);
+  const [screens, links] = await Promise.all([getJSON('data/screens.json').catch(() => ({ screens: [] })), getJSON('data/links.json').catch(() => ({ links: [] }))]);
   const events = await getJSON('data/events.json').catch(() => ({ events: [] }));
   const promos = await getJSON('data/promocodes.json').catch(() => ({ codes: [] }));
-  const [clsIdx, bossIdx] = await Promise.all([classIndex().catch(() => []), bossIndex().catch(() => [])]);
+  const bossIdx = await bossIndex().catch(() => []);
   const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   const docs = [
     ...GUIDES.map((g) => ({ title: g.title, sub: 'Гайд · ' + g.tag, text: g.summary + ' ' + strip(g.body), href: '#/guides/' + g.id })),
-    ...raids.raids.map((r) => ({ title: r.name, sub: 'Калькулятор золота', text: r.notes || '', href: '#/gold' })),
     ...screens.screens.flatMap((s) => [{ title: s.title, sub: 'Интерфейс', text: '', href: '#/ui/' + s.id },
       ...(s.hotspots || []).map((h) => ({ title: h.title, sub: 'Интерфейс · ' + s.title, text: h.text, href: '#/ui/' + s.id }))]),
     ...links.links.map((l) => ({ title: l.title, sub: 'Полезная ссылка · ' + l.domain, text: l.desc, href: l.url, ext: true })),
     ...MECH_INDEX.map((m) => ({ title: m.name, sub: 'Механика', text: m.text, href: '#/mechanics/' + m.id })),
     ...(events.events || []).map((e) => ({ title: e.title, sub: 'Событие · ' + e.kind, text: (e.how || []).join(' ') + ' ' + e.rewards.flatMap((r) => r.items).join(' '), href: '#/events' })),
-    ...clsIdx, ...bossIdx,
+    ...bossIdx,
     { title: 'Промокоды', sub: 'Коды и активация', text: 'промокод код подарок активировать ' + promos.codes.map((c) => c.code + ' ' + c.set).join(' '), href: '#/promo' },
     { title: 'Прокачка 1705 → 1730', sub: 'Интерактивная схема', text: 'свитки высшая закалка вышка книжки 19-20 заточка ядра реликтовые руниты мококомонетки 1720 1730', href: '#/progress' },
-    { title: 'Чек-лист дел', sub: 'Инструмент', text: 'ежедневные еженедельные сброс', href: '#/checklist' },
     { title: 'Источники', sub: 'Справка', text: 'lostark.ru патчноуты', href: '#/sources' },
   ];
   const fuse = new Fuse(docs, { keys: [{ name: 'title', weight: 3 }, 'text'], threshold: 0.38, ignoreLocation: true, minMatchCharLength: 2 });
@@ -322,7 +321,6 @@ document.getElementById('themeBtn').addEventListener('click', () => {
   const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
   document.documentElement.dataset.theme = next;
   try { localStorage.setItem('mk-theme', next); } catch (e) {}
-  if (location.hash.startsWith('#/gold')) route(); // перерисовать график под тему
 });
 
 // ===== Старт =====

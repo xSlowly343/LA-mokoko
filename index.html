@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/animations/shift-away.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.css">
-  <link rel="stylesheet" href="css/style.css?v=202611200754">
+  <link rel="stylesheet" href="css/style.css?v=202611200843">
   <script>
     // тема до отрисовки, чтобы не мигало
     try { const t = localStorage.getItem('mk-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
@@ -25,22 +25,20 @@
     "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.es.js",
     "fuse": "https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs",
     "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.mjs",
-    "./js/app.js": "./js/app.js?v=202611200754",
-    "./js/bg.js": "./js/bg.js?v=202611200754",
-    "./js/bosses.js": "./js/bosses.js?v=202611200754",
-    "./js/checklist.js": "./js/checklist.js?v=202611200754",
-    "./js/classes.js": "./js/classes.js?v=202611200754",
-    "./js/events.js": "./js/events.js?v=202611200754",
-    "./js/fx.js": "./js/fx.js?v=202611200754",
-    "./js/gold.js": "./js/gold.js?v=202611200754",
-    "./js/guides.js": "./js/guides.js?v=202611200754",
-    "./js/mascot.js": "./js/mascot.js?v=202611200754",
-    "./js/mechanics.js": "./js/mechanics.js?v=202611200754",
-    "./js/news.js": "./js/news.js?v=202611200754",
-    "./js/progress.js": "./js/progress.js?v=202611200754",
-    "./js/promo.js": "./js/promo.js?v=202611200754",
-    "./js/store.js": "./js/store.js?v=202611200754",
-    "./js/ui-screens.js": "./js/ui-screens.js?v=202611200754"
+    "./js/app.js": "./js/app.js?v=202611200843",
+    "./js/bg.js": "./js/bg.js?v=202611200843",
+    "./js/bosses.js": "./js/bosses.js?v=202611200843",
+    "./js/events.js": "./js/events.js?v=202611200843",
+    "./js/fx.js": "./js/fx.js?v=202611200843",
+    "./js/guides.js": "./js/guides.js?v=202611200843",
+    "./js/mascot.js": "./js/mascot.js?v=202611200843",
+    "./js/mechanics.js": "./js/mechanics.js?v=202611200843",
+    "./js/news.js": "./js/news.js?v=202611200843",
+    "./js/progress.js": "./js/progress.js?v=202611200843",
+    "./js/promo.js": "./js/promo.js?v=202611200843",
+    "./js/store.js": "./js/store.js?v=202611200843",
+    "./js/tooltip.js": "./js/tooltip.js?v=202611200843",
+    "./js/ui-screens.js": "./js/ui-screens.js?v=202611200843"
   }
 }
   </script>
@@ -59,18 +57,15 @@
       <a href="#/guides" data-nav="guides">Гайды</a>
       <a href="#/progress" data-nav="progress">Прокачка</a>
       <a href="#/mechanics" data-nav="mechanics">Механики</a>
-      <a href="#/classes" data-nav="classes">Классы</a>
-      <a href="#/bosses" data-nav="bosses">Боссы</a>
+      <a href="#/bosses" data-nav="bosses">Рейды</a>
       <a href="#/events" data-nav="events">События</a>
       <div class="nav-more">
         <button type="button" class="nav-more-btn" data-nav="nav-more">Ещё ▾</button>
         <div class="nav-drop">
-          <a href="#/bosses" data-nav="bosses" class="nav-narrow">Боссы</a>
+          <a href="#/bosses" data-nav="bosses" class="nav-narrow">Рейды</a>
           <a href="#/events" data-nav="events" class="nav-narrow">События</a>
           <a href="#/ui" data-nav="ui">Интерфейс</a>
-          <a href="#/gold" data-nav="gold">Золото</a>
           <a href="#/promo" data-nav="promo">Промокоды</a>
-          <a href="#/checklist" data-nav="checklist">Чек-лист</a>
           <a href="#/sources" data-nav="sources">Источники и ссылки</a>
         </div>
       </div>
@@ -101,11 +96,8 @@
       <a href="#/news" data-nav="news"><span>📰</span>Новости</a>
       <a href="#/progress" data-nav="progress"><span>⇪</span>Прокачка</a>
       <a href="#/mechanics" data-nav="mechanics"><span>✴</span>Механики</a>
-      <a href="#/classes" data-nav="classes"><span>⚔</span>Классы</a>
-      <a href="#/bosses" data-nav="bosses"><span>☠</span>Боссы</a>
-      <a href="#/gold" data-nav="gold"><span>◉</span>Золото</a>
+      <a href="#/bosses" data-nav="bosses"><span>☠</span>Рейды по ГС</a>
       <a href="#/promo" data-nav="promo"><span>🎁</span>Промокоды</a>
-      <a href="#/checklist" data-nav="checklist"><span>✓</span>Чек-лист</a>
       <a href="#/sources" data-nav="sources"><span>ⓘ</span>Источники и ссылки</a>
     </div>
   </div>
@@ -135,6 +127,6 @@
   <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script type="module" src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
-  <script type="module" src="js/app.js?v=202611200754"></script>
+  <script type="module" src="js/app.js?v=202611200843"></script>
 </body>
 </html>

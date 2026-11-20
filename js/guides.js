@@ -34,41 +34,6 @@ export const GUIDES = [
 `
   },
   {
-    id: 'raids-now',
-    cover: 'assets/bosses/belgardin-poster.webp',
-    title: 'Рейды конца 2026: куда пустят по уровню',
-    tag: 'Рейды',
-    icon: '☠',
-    minutes: 4,
-    updated: '2026-11-20',
-    summary: 'Актуальные рейды и требования к уровню предметов по официальным анонсам.',
-    sources: ['news-2695', 'news-2676', 'news-2613', 'history', 'changelist'],
-    body: `
-<p>Таблица собрана из официальных анонсов. Где требование не опубликовано — стоит прочерк: смотрите окно входа в рейд в игре.</p>
-<div class="table-wrap"><table class="tbl">
-<thead><tr><th>Контент</th><th>Сложность</th><th>Уровень предметов</th><th>Когда</th></tr></thead>
-<tbody>
-<tr><td rowspan="2">Экстрим Казерос «Акт III. Апофеоз бушующего мрака»</td><td>Обычный</td><td>1730+</td><td rowspan="2">18.11 – 16.12.2026<span class="src" data-src="news-2695"></span></td></tr>
-<tr><td>Героический</td><td>1770+</td></tr>
-<tr><td rowspan="4">Рейд Теней «Бельгардин, Длань смерти»</td><td>Экспедиция</td><td>1750+</td><td rowspan="4">с 21.10.2026<span class="src" data-src="news-2676"></span></td></tr>
-<tr><td>Обычный</td><td>1750+</td></tr>
-<tr><td>Героический</td><td>1770+</td></tr>
-<tr><td>Кошмарный</td><td>1780+</td></tr>
-<tr><td>Рейд Теней «Зерка, ведьма боли»</td><td>Экспедиция, обычный, героический, кошмарный</td><td>—</td><td>с 15.04.2026<span class="src" data-src="history"></span></td></tr>
-<tr><td>Подземелье Бездны «Собор Сакра-Финистриа»</td><td>3 сложности</td><td>—</td><td>с 10.06.2026<span class="src" data-src="history"></span></td></tr>
-</tbody></table></div>
-
-<h3>Что важно знать новичку</h3>
-<ul>
-  <li><b>Экспедиция</b> — облегчённый режим рейдов Теней. В «Зерке» (рейд на 4) — подбор групп от 1 до 4 игроков.<span class="src" data-src="news-2620"></span> В «Бельгардине» (рейд на 8) — соло, «Найти группу» на 1–7 игроков или готовый рейд из 8.<span class="src" data-src="news-2676"></span> Золото и ресурсы как в обычном режиме, но нет аукциона и энергии эсдо.<span class="src" data-src="news-2613"></span></li>
-  <li><b>Размер группы фиксирован:</b> рейд на 8 человек вчетвером не пройти. Соло-режим есть у Экидны, Камена и рейдов Казероса (Акты I–IV и Финал) — подробности в разделе <a href="#/bosses">«Боссы»</a>.<span class="src" data-src="news-2612"></span></li>
-  <li>Для «Бельгардина» и «Сакра-Финистрии» нужно пройти задание Кадарума <b>«Когда затих колокол»</b>.<span class="src" data-src="news-2676"></span></li>
-  <li>Новый слот снаряжения — <b>манжеты</b>: выдаются за первое прохождение 2-й фазы «Бельгардина» на любой сложности, слот открывается с 1750.<span class="src" data-src="news-2676"></span></li>
-  <li>Регион <b>архипелаг Кадарум</b> требует 1700 и задание «Сквозь любые бури».<span class="src" data-src="history"></span></li>
-</ul>
-`
-  },
-  {
     id: 'gold-basics',
     cover: 'assets/bosses/kazeros-poster.webp',
     title: 'Золото: обычное, персональное и экстрим-рейды',
@@ -93,8 +58,7 @@ export const GUIDES = [
 </ul>
 
 <h3>Чего мы пока не знаем точно</h3>
-<p>Официальная таблица золота за рейды есть в Энциклопедии на lostark.ru, но автоматически прочитать её не удалось. Поэтому золото за врата обычных рейдов в калькуляторе <b>вводится вручную</b> — берите цифры из превью наград в окне входа в рейд. Лимит персонажей-получателей золота для текущего патча тоже не нашли в источниках.</p>
-<a class="btn" href="#/gold">Открыть калькулятор золота →</a>
+<p>Сколько золота даёт каждый рейд, смотрите в превью наград в окне входа и в официальной таблице Энциклопедии lostark.ru.</p>
 `
   },
   {
@@ -117,7 +81,7 @@ export const GUIDES = [
 
 <h3>Откуда берётся обычное золото</h3>
 <ul class="icon-list">
-  <li><iconify-icon icon="game-icons:crossed-swords"></iconify-icon><span><b>Рейды</b> обычного и героического режима — главный источник. Сколько даёт каждый рейд, смотрите в окне входа и в разделе <a href="#/bosses">«Боссы»</a>.<span class="src" data-src="wiki-currency"></span></span></li>
+  <li><iconify-icon icon="game-icons:crossed-swords"></iconify-icon><span><b>Рейды</b> обычного и героического режима — главный источник. Сколько даёт каждый рейд, смотрите в окне входа и в разделе <a href="#/bosses">«Рейды по ГС»</a>.<span class="src" data-src="wiki-currency"></span></span></li>
   <li><iconify-icon icon="game-icons:present"></iconify-icon><span><b>«Подарки Судьбы»</b> — в активностях выше 1580 уровня снаряжения.<span class="src" data-src="wiki-currency"></span></span></li>
   <li><iconify-icon icon="game-icons:compass"></iconify-icon><span><b>Острова Компаса Процея.</b><span class="src" data-src="wiki-currency"></span></span></li>
   <li><iconify-icon icon="game-icons:shaking-hands"></iconify-icon><span><b>Торговля с игроками</b> и некоторые задания.<span class="src" data-src="wiki-currency"></span></span></li>
@@ -140,7 +104,6 @@ export const GUIDES = [
   <li>Всё золото из «Собора Сакра-Финистриа» — <span class="hl-purple">персональное</span> (с 17.06.2026).<span class="src" data-src="changelist"></span></li>
   <li>Золото за рейды меняли 10.06 и 16.09.2026 — <b>цифры из старых гайдов не годятся</b>.<span class="src" data-src="changelist"></span></li>
 </ul>
-<a class="btn" href="#/gold">Посчитать доход за неделю →</a>
 `
   },
   {
@@ -191,7 +154,7 @@ export const GUIDES = [
   },
   {
     id: 'classes-new',
-    cover: 'assets/classes/dimensionmaster-art.webp',
+    cover: 'assets/bosses/belgardin-poster.webp',
     title: 'Новые классы 2025–2026',
     tag: 'Классы',
     icon: '✸',
@@ -246,14 +209,14 @@ export const GUIDES = [
     icon: '✦',
     minutes: 1,
     updated: '2026-11-20',
-    summary: 'Разбор интерфейса, калькулятор, чек-лист и отметки «прочитано».',
+    summary: 'Разбор интерфейса, прокачка, рейды по ГС и отметки «прочитано».',
     sources: [],
     body: `
 <ol class="steps">
   <li><b>Интерфейс</b> — откройте экран и нажимайте на подсвеченные зоны. Мококо объяснит, что это.</li>
   <li><b>Гайды</b> — у каждого факта есть значок источника <span class="src-demo">ⓘ</span> с датой. Нажмите «Прочитано», чтобы отметить гайд.</li>
-  <li><b>Золото</b> — добавьте персонажей, отметьте рейды и получите доход за неделю. Данные сохраняются в браузере.</li>
-  <li><b>Чек-лист</b> — свои ежедневные и еженедельные дела с автосбросом.</li>
+  <li><b>Прокачка</b> — отвечайте на вопросы, и квест подскажет следующий шаг заточки.</li>
+  <li><b>Рейды по ГС</b> — какие рейды доступны на вашем уровне снаряжения.</li>
   <li><b>Поиск</b> — клавиша <kbd>/</kbd> или значок лупы.</li>
 </ol>
 `
