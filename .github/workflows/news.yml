@@ -1,4 +1,4 @@
-name: Новости lostark.ru
+name: Новости и промокоды lostark.ru
 
 on:
   schedule:
@@ -23,14 +23,16 @@ jobs:
           python-version: "3.12"
       - name: Забрать новости
         run: python scripts/fetch_news.py
+      - name: Найти промокоды в новых новостях
+        run: python scripts/fetch_promos.py
       - name: Сохранить, если есть изменения
         run: |
-          if git diff --quiet -- data/news.json; then
+          if git diff --quiet -- data/news.json data/promocodes.json; then
             echo "Изменений нет"
             exit 0
           fi
           git config user.name "news-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/news.json
-          git commit -m "Новости: автообновление"
+          git add data/news.json data/promocodes.json
+          git commit -m "Новости и промокоды: автообновление"
           git push

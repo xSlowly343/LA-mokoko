@@ -19,10 +19,21 @@ async function copy(text) {
   }
 }
 
+const RAW = 'https://raw.githubusercontent.com/xSlowly343/LA-mokoko/main/data/promocodes.json';
+let cache = null, cacheAt = 0;
+// как и новости: свежая версия прямо из репозитория, запасной вариант — локальный файл
+async function getPromos() {
+  if (cache && Date.now() - cacheAt < 5 * 60e3) return cache;
+  try { const r = await fetch(RAW, { cache: 'no-cache' }); if (!r.ok) throw 0; cache = await r.json(); }
+  catch (e) { cache = await getJSON('data/promocodes.json'); }
+  cacheAt = Date.now();
+  return cache;
+}
+
 export async function renderPromo(page) {
-  const [data, sources] = await Promise.all([getJSON('data/promocodes.json'), getJSON('data/sources.json')]);
+  const [data, sources] = await Promise.all([getPromos(), getJSON('data/sources.json')]);
   const now = Date.now();
-  const codes = data.codes.map((c) => ({ ...c, ms: endOf(c.until) - now })).sort((a, b) => (b.ms > 0) - (a.ms > 0) || a.ms - b.ms);
+  const codes = data.codes.map((c) => ({ ...c, ms: c.until ? endOf(c.until) - now : 1 })).sort((a, b) => (b.ms > 0) - (a.ms > 0) || a.ms - b.ms);
   const active = codes.filter((c) => c.ms > 0);
 
   page.innerHTML = `
@@ -42,18 +53,22 @@ export async function renderPromo(page) {
     <div class="promo-list">
       ${codes.map((c) => {
         const live = c.ms > 0;
-        const src = sources[c.source];
+        const src = sources[c.source] || (c.sourceUrl ? { url: c.sourceUrl, title: c.sourceTitle || 'Новость на lostark.ru', date: c.sourceDate } : null);
         return `<article class="promo-card frame ${live ? '' : 'expired'}">
           <div class="pc-top">
             <span class="pc-status ${live ? 'on' : 'off'}">${live ? 'Действует' : 'Истёк'}</span>
-            <span class="pc-left">${live ? 'осталось ' + left(c.ms) : esc(c.untilNote)}</span>
+            ${c.auto ? '<span class="pc-auto" title="Найден автоматически в новости lostark.ru">авто</span>' : ''}
+            <span class="pc-left">${!c.until ? 'срок не указан' : live ? 'осталось ' + left(c.ms) : esc(c.untilNote)}</span>
           </div>
           <button class="pc-code" data-copy="${esc(c.code)}" ${live ? '' : 'disabled'} title="Скопировать">
             <span>${esc(c.code)}</span><iconify-icon icon="game-icons:files"></iconify-icon>
           </button>
           <div class="pc-set"><b>${esc(c.set)}</b><small>${esc(c.untilNote)}</small></div>
           ${c.note ? `<p class="muted pc-note">${esc(c.note)}</p>` : ''}
-          <ul class="rw pc-items">${c.items.map((it) => `<li>${rewardIcon(it)}<span>${esc(it)}</span></li>`).join('')}</ul>
+          ${c.check ? '<p class="pc-check">⚠ Часть данных не удалось прочитать автоматически — проверьте в новости на lostark.ru.</p>' : ''}
+          ${!c.items?.length ? '' : ''}
+          ${c.items?.length ? `<ul class="rw pc-items">${c.items.map((it) => `<li>${rewardIcon(it)}<span>${esc(it)}</span></li>`).join('')}</ul>` : ''}
+          ${c.image ? `<a class="pc-img" href="${esc(c.image)}" target="_blank" rel="noopener" title="Состав набора — открыть крупно"><img src="${esc(c.image)}" alt="Состав набора ${esc(c.code)}" loading="lazy"><span>Состав набора · нажмите, чтобы увеличить</span></a>` : ''}
           <div class="pc-actions">
             ${live ? `<a class="btn sm" href="${esc(data.activateUrl)}?code=${encodeURIComponent(c.code)}" target="_blank" rel="noopener">Активировать этот код ↗</a>` : ''}
             ${src ? `<a class="m-src" href="${esc(src.url)}" target="_blank" rel="noopener">ⓘ ${esc(src.title)} · ${fmtDate(src.date)}</a>` : ''}
@@ -73,6 +88,6 @@ export async function renderPromo(page) {
 }
 
 export async function activePromoCount() {
-  const d = await getJSON('data/promocodes.json');
-  return d.codes.filter((c) => endOf(c.until) > Date.now()).length;
+  const d = await getPromos();
+  return d.codes.filter((c) => !c.until || endOf(c.until) > Date.now()).length;
 }
