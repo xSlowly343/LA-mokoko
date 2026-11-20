@@ -14,6 +14,7 @@ import { renderClasses, classIndex } from './classes.js';
 import { renderBosses, bossIndex } from './bosses.js';
 import { renderPromo, activePromoCount } from './promo.js';
 import { renderNews, getNews, newsCard, isNew, markNewInNav } from './news.js';
+import { renderProgress } from './progress.js';
 import { initFX, reveal, transition, moveNavPill, intro, lenis } from './fx.js';
 
 const view = document.getElementById('view');
@@ -60,6 +61,7 @@ function pageHome(page) {
       <a class="tile frame" href="#/checklist"><div class="t-ico">✓</div><h3>Чек-лист</h3><p>Ежедневные и еженедельные дела с автосбросом.</p></a>
       <a class="tile frame" href="#/mechanics"><div class="t-ico">✴</div><h3>Механики</h3><p>Изнурение, разрушение, контратака, парирование — в анимациях.</p></a>
       <a class="tile frame" href="#/events"><div class="t-ico">☄</div><h3>События</h3><p>Что идёт сейчас, сколько осталось и какие награды.</p></a>
+      <a class="tile frame" href="#/progress"><div class="t-ico">⇪</div><h3>Прокачка</h3><p>Интерактивный путь 1705 → 1730: отвечайте на вопросы — подскажем шаг.</p></a>
       <a class="tile frame" href="#/classes"><div class="t-ico">⚔</div><h3>Классы</h3><p>30 классов в 7 архетипах — официальные описания.</p></a>
       <a class="tile frame" href="#/bosses"><div class="t-ico">☠</div><h3>Боссы</h3><p>Рейды и боссы с роликами и датами первых побед на РУ.</p></a>
     </div>
@@ -213,6 +215,7 @@ const routes = {
   bosses: (p, id) => renderBosses(p, id),
   promo: (p) => renderPromo(p),
   news: (p) => renderNews(p),
+  progress: (p) => renderProgress(p),
 };
 function jumpTo(sel) {
   const el = document.querySelector(sel); if (!el) return;
@@ -231,7 +234,7 @@ let lastSection = null;
 async function route() {
   const [, section = '', id] = (location.hash || '#/').split('/');
   const fn = routes[section] || pageHome;
-  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources', 'classes', 'bosses', 'promo', 'news'].includes(section)) || (a.dataset.nav === 'nav-more' && ['checklist', 'sources', 'promo'].includes(section))));
+  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources', 'classes', 'bosses', 'promo', 'news', 'progress'].includes(section)) || (a.dataset.nav === 'nav-more' && ['checklist', 'sources', 'promo', 'ui', 'gold'].includes(section))));
   closeSheet();
   srcTips.forEach((t) => t.destroy()); srcTips = [];
   const first = !routed;
@@ -273,6 +276,7 @@ async function initSearch() {
     ...(events.events || []).map((e) => ({ title: e.title, sub: 'Событие · ' + e.kind, text: (e.how || []).join(' ') + ' ' + e.rewards.flatMap((r) => r.items).join(' '), href: '#/events' })),
     ...clsIdx, ...bossIdx,
     { title: 'Промокоды', sub: 'Коды и активация', text: 'промокод код подарок активировать ' + promos.codes.map((c) => c.code + ' ' + c.set).join(' '), href: '#/promo' },
+    { title: 'Прокачка 1705 → 1730', sub: 'Интерактивная схема', text: 'свитки высшая закалка вышка книжки 19-20 заточка ядра реликтовые руниты мококомонетки 1720 1730', href: '#/progress' },
     { title: 'Чек-лист дел', sub: 'Инструмент', text: 'ежедневные еженедельные сброс', href: '#/checklist' },
     { title: 'Источники', sub: 'Справка', text: 'lostark.ru патчноуты', href: '#/sources' },
   ];
