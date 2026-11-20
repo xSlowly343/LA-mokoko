@@ -1108,7 +1108,7 @@ button.pc-img span { display: flex; align-items: center; gap: 6px; padding: 7px 
 .pg-layout > *, .pg-main { min-width: 0; }
 .pg-trail { max-width: 100%; }
 @media (max-width: 1240px) { .nav a, .nav-more-btn { padding: 6px 8px; font-size: 13px; } }
-@media (max-width: 1060px) { .nav a[data-nav="events"], .nav a[data-nav="bosses"] { display: none; } }
+@media (max-width: 1060px) { .nav > a[data-nav="events"] { display: none; } }
 .nav-drop .nav-narrow { display: none; }
 @media (max-width: 1060px) { .nav-drop .nav-narrow { display: block; } }
 

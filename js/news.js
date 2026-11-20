@@ -6,6 +6,7 @@ import { esc, fmtDate, load, save } from './store.js';
 
 const RAW = 'https://raw.githubusercontent.com/xSlowly343/LA-mokoko/main/data/news.json';
 const LOCAL = 'data/news.json';
+const REPO_RAW = 'https://raw.githubusercontent.com/xSlowly343/LA-mokoko/main/';
 const NEW_MS = 2 * 864e5;
 let cache = null, cacheAt = 0;
 
@@ -30,7 +31,7 @@ export function newsCard(n, opts = {}) {
   const nw = isNew(n);
   const col = CAT_COLOR[n.category] || '#c9a45c';
   return `<a class="news-card frame ${nw ? 'is-new' : ''} ${opts.compact ? 'compact' : ''}" href="${esc(n.url)}" target="_blank" rel="noopener" style="--nc:${col}">
-    <div class="nc-img">${n.image ? `<img src="${esc(n.image)}" alt="" loading="lazy" onerror="this.remove()">` : '<iconify-icon icon="game-icons:scroll-unfurled"></iconify-icon>'}
+    <div class="nc-img">${n.imageLocal || n.image ? `<img src="${esc(n.imageLocal || n.image)}" data-alt="${esc(n.imageLocal ? REPO_RAW + n.imageLocal : '')}" data-orig="${esc(n.image || '')}" alt="" loading="lazy" onerror="const d=this.dataset;if(d.alt&&this.src!==d.alt){this.src=d.alt;d.alt=''}else if(d.orig&&this.src!==d.orig){this.src=d.orig;d.orig=''}else{this.remove()}">` : '<iconify-icon icon="game-icons:scroll-unfurled"></iconify-icon>'}
       ${nw ? '<span class="new-badge">NEW</span>' : ''}</div>
     <div class="nc-body">
       <div class="nc-meta">${n.category ? `<span class="nc-cat">${esc(n.category)}</span>` : ''}<span>${n.date ? fmtDate(n.date) : ''}</span></div>

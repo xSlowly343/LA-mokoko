@@ -14,6 +14,7 @@ from pathlib import Path
 
 SOURCE = "https://lostark.ru/"
 OUT = Path(__file__).resolve().parent.parent / "data" / "news.json"
+IMG_DIR = Path(__file__).resolve().parent.parent / "assets" / "news"
 MAX_ITEMS = 80
 UA = "Mozilla/5.0 (compatible; MokokoTrailNewsBot/1.0; fan site news digest)"
 
@@ -53,6 +54,28 @@ def parse(page: str):
     return items
 
 
+def save_image(url: str, key) -> str | None:
+    """Копия картинки новости в репозитории: сервер lostark.ru отдаёт их нестабильно."""
+    if not url:
+        return None
+    url = "https:" + url if url.startswith("//") else url
+    ext = (re.search(r"\.(png|jpe?g|webp|gif)(\?|$)", url, re.I) or [None, "jpg"])[1].lower()
+    path = IMG_DIR / f"{key}.{ext}"
+    if path.exists():
+        return f"assets/news/{path.name}"
+    IMG_DIR.mkdir(parents=True, exist_ok=True)
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Referer": SOURCE})
+    for i in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                path.write_bytes(r.read())
+            return f"assets/news/{path.name}"
+        except Exception:
+            import time
+            time.sleep(3 * (i + 1))
+    return None
+
+
 def main() -> int:
     req = urllib.request.Request(SOURCE, headers={"User-Agent": UA, "Accept-Language": "ru"})
     with urllib.request.urlopen(req, timeout=30) as r:
@@ -77,6 +100,11 @@ def main() -> int:
             added += 1
         by_key[key] = n
     items = sorted(by_key.values(), key=lambda n: (n.get("date") or "", n.get("id") or 0), reverse=True)[:MAX_ITEMS]
+    for n in items:
+        if n.get("image") and not n.get("imageLocal"):
+            local = save_image(n["image"], n.get("id") or abs(hash(n["url"])))
+            if local:
+                n["imageLocal"] = local
 
     data = {"source": SOURCE, "items": items}
     if json.dumps(data.get("items"), sort_keys=True) == json.dumps(old.get("items"), sort_keys=True):

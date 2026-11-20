@@ -1,7 +1,6 @@
 // Точка входа: маршруты, главная, гайды, источники, поиск, тема.
 import anime from 'animejs';
 import Fuse from 'fuse';
-import { GUIDES } from './guides.js';
 import { load, save, esc, fmtDate, getJSON } from './store.js';
 import { initBackground } from './bg.js';
 import { initMascot, say, hide as hideBubble } from './mascot.js';
@@ -34,16 +33,15 @@ async function wireSources(root) {
 // ===== Страницы =====
 function pageHome(page) {
   page.dataset.home = '1';
-  const read = load('read', []);
   page.innerHTML = `
     <section class="hero">
       <div>
         <div class="patch-badge"><i></i>Актуально на обновление «Забытые легенды» · 18.11.2026</div>
         <h1>Тропа <span>мококо</span>: путеводитель по Lost Ark для новичков</h1>
-        <p class="lead">Сюжет пропущен, персонаж прокачан, а вокруг сотни непонятных окон? Здесь разбор интерфейса по клику, гайды по свежим патчам со ссылками на источники и калькулятор золота.</p>
+        <p class="lead">Сюжет пропущен, а впереди заточка, рейды и механики? Здесь пошаговая прокачка, рейды по вашему ГС, боевые механики на кадрах из игры, свежие новости и промокоды.</p>
         <div class="hero-cta">
-          <a class="btn" href="#/ui">Начать с интерфейса →</a>
-          <a class="btn ghost" href="#/guides/outdated">Что устарело</a>
+          <a class="btn" href="#/progress">Начать прокачку →</a>
+          <a class="btn ghost" href="#/bosses">Рейды по ГС</a>
         </div>
       </div>
       <div class="hero-art" aria-hidden="true">
@@ -52,12 +50,10 @@ function pageHome(page) {
       </div>
     </section>
     <div class="tiles">
-      <a class="tile frame" href="#/ui"><div class="t-ico">◈</div><h3>Интерфейс</h3><p>Нажимайте на элементы экрана и узнавайте, что за что отвечает.</p></a>
-      <a class="tile frame" href="#/guides"><div class="t-ico">❖</div><h3>Гайды</h3><p>Только свежие патчи, у каждого факта источник и дата.</p></a>
-      <a class="tile frame" href="#/mechanics"><div class="t-ico">✴</div><h3>Механики</h3><p>Изнурение, разрушение, контратака, парирование — в анимациях.</p></a>
+      <a class="tile frame" href="#/progress"><div class="t-ico">⇪</div><h3>Прокачка</h3><p>Путь 1700 → 1730: отвечайте на вопросы — квест подскажет следующий шаг заточки.</p></a>
+      <a class="tile frame" href="#/bosses"><div class="t-ico">☠</div><h3>Рейды по ГС</h3><p>Укажите свой ГС — покажем, какие рейды и сложности уже доступны.</p></a>
+      <a class="tile frame" href="#/mechanics"><div class="t-ico">✴</div><h3>Механики</h3><p>Изнурение, разрушение, контратака и парирование — на кадрах из игры, с тренажёром.</p></a>
       <a class="tile frame" href="#/events"><div class="t-ico">☄</div><h3>События</h3><p>Что идёт сейчас, сколько осталось и какие награды.</p></a>
-      <a class="tile frame" href="#/progress"><div class="t-ico">⇪</div><h3>Прокачка</h3><p>Интерактивный путь 1705 → 1730: отвечайте на вопросы — подскажем шаг.</p></a>
-      <a class="tile frame" href="#/bosses"><div class="t-ico">☠</div><h3>Рейды по ГС</h3><p>Какие рейды ходить на вашем уровне и сколько БС нужно в подборе.</p></a>
     </div>
     <a class="promo-strip frame" href="#/promo" id="promoStrip"><iconify-icon icon="game-icons:present"></iconify-icon><span><b>Промокоды</b><small id="promoCnt">официальные коды и быстрая активация</small></span><span class="ps-go">Открыть →</span></a>
     <section class="section">
@@ -123,72 +119,6 @@ function linkCards(links) {
     </a>`).join('')}</div>`;
 }
 
-function guideCard(g, read) {
-  return `<a class="guide-card frame" href="#/guides/${g.id}">
-    ${g.cover ? `<div class="g-cover"><img src="${g.cover}" alt="" loading="lazy"></div>` : ''}
-    <div class="g-top"><span class="tag">${esc(g.tag)}</span><span>${read.includes(g.id) ? '<span class="read-mark">✓ прочитано</span>' : `${g.minutes} мин`}</span></div>
-    <h3>${esc(g.icon)} ${esc(g.title)}</h3>
-    <p>${esc(g.summary)}</p>
-    <div class="g-top"><span>Проверено ${fmtDate(g.updated)}</span></div>
-  </a>`;
-}
-
-function pageGuides(page) {
-  const read = load('read', []);
-  const tags = ['Все', ...new Set(GUIDES.map((g) => g.tag))];
-  let current = 'Все';
-  page.innerHTML = `
-    <div class="page-head"><div class="eyebrow">Гайды</div><h1>Знания для мококо</h1>
-      <p>Для тех, кто пропустил сюжет и начинает эндгейм. Прочитано: ${read.filter((id) => GUIDES.some((g) => g.id === id)).length} из ${GUIDES.length}.</p></div>
-    <div class="filters">${tags.map((t) => `<button class="chip ${t === current ? 'on' : ''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>
-    <div class="guide-grid" id="gg"></div>`;
-  const draw = () => {
-    page.querySelector('#gg').innerHTML = GUIDES.filter((g) => current === 'Все' || g.tag === current).map((g) => guideCard(g, read)).join('');
-    reveal(page.querySelector('#gg'));
-  };
-  draw();
-  page.querySelector('.filters').addEventListener('click', (e) => {
-    const b = e.target.closest('.chip'); if (!b) return;
-    current = b.dataset.tag;
-    page.querySelectorAll('.chip').forEach((c) => c.classList.toggle('on', c === b));
-    draw();
-  });
-}
-
-async function pageGuide(page, id) {
-  const g = GUIDES.find((x) => x.id === id);
-  if (!g) { page.innerHTML = '<p>Гайд не найден. <a href="#/guides">К списку</a></p>'; return; }
-  const sources = await getJSON('data/sources.json');
-  const read = load('read', []);
-  const isRead = read.includes(id);
-  const idx = GUIDES.indexOf(g);
-  const next = GUIDES[idx + 1];
-  page.innerHTML = `
-    <article class="article frame">
-      <a href="#/guides" class="muted" style="font-size:13px">← Все гайды</a>
-      ${g.cover ? `<div class="a-cover"><img src="${g.cover}" alt=""></div>` : ''}
-      <h1 style="margin-top:10px">${esc(g.title)}</h1>
-      <div class="meta"><span class="tag">${esc(g.tag)}</span><span>${g.minutes} мин чтения</span><span>Проверено ${fmtDate(g.updated)}</span></div>
-      ${g.body}
-      ${g.sources.length ? `<h3>Источники</h3><ul class="src-list">${g.sources.map((s) => sources[s] ? `<li><a href="${esc(sources[s].url)}" target="_blank" rel="noopener">${esc(sources[s].title)}</a> — ${sources[s].date ? fmtDate(sources[s].date) : 'дата не указана'}</li>` : '').join('')}</ul>` : ''}
-      <div class="article-foot">
-        <button class="btn ${isRead ? 'ghost' : ''}" id="readBtn">${isRead ? '✓ Прочитано' : 'Отметить как прочитанное'}</button>
-        ${next ? `<a class="btn ghost" href="#/guides/${next.id}">Дальше: ${esc(next.title)} →</a>` : ''}
-      </div>
-    </article>`;
-  wireSources(page);
-  page.querySelector('#readBtn').addEventListener('click', (e) => {
-    const r = load('read', []);
-    const i = r.indexOf(id);
-    if (i >= 0) r.splice(i, 1); else r.push(id);
-    save('read', r);
-    const now = r.includes(id);
-    e.currentTarget.textContent = now ? '✓ Прочитано' : 'Отметить как прочитанное';
-    e.currentTarget.classList.toggle('ghost', now);
-    if (now) say('Молодец!', `<p>Гайд прочитан. Всего прочитано: ${r.filter((x) => GUIDES.some((g) => g.id === x)).length} из ${GUIDES.length}.</p>`);
-  });
-}
-
 async function pageSources(page) {
   const [sources, links] = await Promise.all([getJSON('data/sources.json'), getJSON('data/links.json')]);
   const list = Object.entries(sources).sort((a, b) => (b[1].date || '').localeCompare(a[1].date || ''));
@@ -208,7 +138,7 @@ async function pageSources(page) {
 // ===== Роутер =====
 const routes = {
   '': pageHome,
-  guides: (p, id) => (id ? pageGuide(p, id) : pageGuides(p)),
+  guides: (p) => renderBosses(p),
   ui: (p, id) => renderUI(p, id),
   sources: pageSources,
   mechanics: (p, id) => renderMechanics(p).then(() => id && setTimeout(() => jumpTo('#m-' + id), 50)),
@@ -235,7 +165,7 @@ let lastSection = null;
 async function route() {
   const [, section = '', id] = (location.hash || '#/').split('/');
   const fn = routes[section] || pageHome;
-  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'sources', 'bosses', 'promo', 'news', 'progress', 'ui'].includes(section)) || (a.dataset.nav === 'nav-more' && ['sources', 'promo', 'ui'].includes(section))));
+  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'sources', 'promo', 'news', 'ui'].includes(section)) || (a.dataset.nav === 'nav-more' && ['sources', 'promo', 'ui'].includes(section))));
   closeSheet();
   srcTips.forEach((t) => t.destroy()); srcTips = [];
   const first = !routed;
@@ -268,7 +198,6 @@ async function initSearch() {
   const bossIdx = await bossIndex().catch(() => []);
   const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   const docs = [
-    ...GUIDES.map((g) => ({ title: g.title, sub: 'Гайд · ' + g.tag, text: g.summary + ' ' + strip(g.body), href: '#/guides/' + g.id })),
     ...screens.screens.flatMap((s) => [{ title: s.title, sub: 'Интерфейс', text: '', href: '#/ui/' + s.id },
       ...(s.hotspots || []).map((h) => ({ title: h.title, sub: 'Интерфейс · ' + s.title, text: h.text, href: '#/ui/' + s.id }))]),
     ...links.links.map((l) => ({ title: l.title, sub: 'Полезная ссылка · ' + l.domain, text: l.desc, href: l.url, ext: true })),
@@ -336,6 +265,6 @@ setInterval(markNewInNav, 30 * 60e3);
 route();
 initSearch();
 if (!load('greeted', false)) {
-  setTimeout(() => say('Привет, мококо!', '<p>Я помогу освоиться в Lost Ark. Начните с раздела «Интерфейс» или почитайте, что в игре <a href="#/guides/outdated">уже устарело</a>.</p>'), 900);
+  setTimeout(() => say('Привет, мококо!', '<p>Я помогу освоиться в Lost Ark. Начните с <a href="#/progress">прокачки</a> или посмотрите, <a href="#/bosses">какие рейды доступны на вашем ГС</a>.</p>'), 900);
   save('greeted', true);
 }

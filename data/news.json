@@ -2,6 +2,17 @@
  "source": "https://lostark.ru/",
  "items": [
   {
+   "id": 2703,
+   "url": "https://lostark.ru/news/2703-sobytie-schastlivye-chasy-34",
+   "title": "Событие «Счастливые часы»",
+   "lead": "Заходите в LOST ARK в период события — и получите полезные награды!",
+   "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/07493c26d678d8558b8408cfcdb39799.jpg",
+   "category": "События",
+   "date": "2026-11-20",
+   "firstSeen": "2026-11-20T09:10:17+00:00",
+   "imageLocal": "assets/news/2703.jpg"
+  },
+  {
    "id": 2704,
    "url": "https://lostark.ru/news/2704-astrum-entertainment-na-comic-con-igromir",
    "title": "Astrum Entertainment на Comic Con Игромир",
@@ -9,7 +20,8 @@
    "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/434bfc68bd1bc666ec8a4104a799500f.jpg",
    "category": "Другое",
    "date": "2026-11-19",
-   "firstSeen": "2026-11-20T06:47:31+00:00"
+   "firstSeen": "2026-11-20T06:47:31+00:00",
+   "imageLocal": "assets/news/2704.jpg"
   },
   {
    "id": 2702,
@@ -19,7 +31,8 @@
    "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/e8241da57b41db2203f6472b2f622abf.jpg",
    "category": "Важное",
    "date": "2026-11-18",
-   "firstSeen": "2026-11-20T06:47:31+00:00"
+   "firstSeen": "2026-11-20T06:47:31+00:00",
+   "imageLocal": "assets/news/2702.jpg"
   },
   {
    "id": 2701,
@@ -29,7 +42,8 @@
    "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/acf0d589ebd3732e65ea78417db8e260.jpg",
    "category": "Изменения",
    "date": "2026-11-18",
-   "firstSeen": "2026-11-20T06:47:31+00:00"
+   "firstSeen": "2026-11-20T06:47:31+00:00",
+   "imageLocal": "assets/news/2701.jpg"
   },
   {
    "id": 2698,
@@ -39,7 +53,8 @@
    "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/8ebef82cc582620e80a31b28630b7747.jpg",
    "category": "Обзоры",
    "date": "2026-11-18",
-   "firstSeen": "2026-11-20T06:47:31+00:00"
+   "firstSeen": "2026-11-20T06:47:31+00:00",
+   "imageLocal": "assets/news/2698.jpg"
   },
   {
    "id": 2699,
@@ -59,7 +74,8 @@
    "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/6283f1e1294483ab45f53008fd4719e2.jpg",
    "category": "Важное",
    "date": "2026-11-17",
-   "firstSeen": "2026-11-20T06:47:31+00:00"
+   "firstSeen": "2026-11-20T06:47:31+00:00",
+   "imageLocal": "assets/news/2697.jpg"
   },
   {
    "id": 2696,
@@ -212,5 +228,5 @@
    "firstSeen": "2026-11-20T00:00:00+00:00"
   }
  ],
- "checked": "2026-11-20T06:50:00+00:00"
+ "checked": "2026-11-20T09:10:17+00:00"
 }
