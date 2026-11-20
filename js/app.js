@@ -8,6 +8,7 @@ import { initMascot, say, hide as hideBubble } from './mascot.js';
 import { renderUI } from './ui-screens.js';
 import { renderGold } from './gold.js';
 import { renderChecklist } from './checklist.js';
+import { initFX, reveal, transition, moveNavPill, intro, lenis } from './fx.js';
 
 const view = document.getElementById('view');
 let srcTips = [];
@@ -28,6 +29,7 @@ async function wireSources(root) {
 
 // ===== Страницы =====
 function pageHome(page) {
+  page.dataset.home = '1';
   const read = load('read', []);
   page.innerHTML = `
     <section class="hero">
@@ -54,12 +56,27 @@ function pageHome(page) {
     <section class="section">
       <div class="section-head"><h2>Начните с этого</h2><a href="#/guides">Все гайды →</a></div>
       <div class="guide-grid">${GUIDES.slice(0, 3).map((g) => guideCard(g, read)).join('')}</div>
+    </section>
+    <section class="section" id="links">
+      <div class="section-head"><h2>Полезные ссылки</h2><a href="#/sources">Все источники →</a></div>
+      <div id="homeLinks"></div>
     </section>`;
+  getJSON('data/links.json').then((d) => { const h = page.querySelector('#homeLinks'); if (h) { h.innerHTML = linkCards(d.links); reveal(h); } });
   anime({ targets: page.querySelectorAll('.hero > div:first-child > *'), opacity: [0, 1], translateY: [16, 0], delay: anime.stagger(80), duration: 600, easing: 'easeOutCubic' });
-  anime({ targets: page.querySelectorAll('.tile'), opacity: [0, 1], translateY: [20, 0], delay: anime.stagger(70, { start: 250 }), duration: 550, easing: 'easeOutCubic' });
   anime({ targets: page.querySelector('.hero-art .r2'), rotate: 360, duration: 60000, loop: true, easing: 'linear' });
   anime({ targets: '#heroMokoko', translateY: [-6, 6], direction: 'alternate', loop: true, duration: 1800, easing: 'easeInOutSine' });
   page.querySelector('#heroMokoko').addEventListener('click', () => say('Пи-пи!', '<p>Это я, ваш мококо-помощник. Я живу в правом нижнем углу — нажмите на меня, если нужен совет.</p>'));
+}
+
+function linkCards(links) {
+  return `<div class="link-grid">${links.map((l) => `
+    <a class="link-card frame" href="${esc(l.url)}" target="_blank" rel="noopener">
+      <div class="lc-top"><span class="lc-ico">${esc(l.icon)}</span><span class="tag">${esc(l.kind)}</span></div>
+      <h3>${esc(l.title)}</h3>
+      <p>${esc(l.desc)}</p>
+      ${l.note ? `<p class="muted lc-note">${esc(l.note)}</p>` : ''}
+      <div class="lc-foot"><span>${esc(l.domain)}</span><span class="lc-go">Перейти ↗</span></div>
+    </a>`).join('')}</div>`;
 }
 
 function guideCard(g, read) {
@@ -82,7 +99,7 @@ function pageGuides(page) {
     <div class="guide-grid" id="gg"></div>`;
   const draw = () => {
     page.querySelector('#gg').innerHTML = GUIDES.filter((g) => current === 'Все' || g.tag === current).map((g) => guideCard(g, read)).join('');
-    anime({ targets: page.querySelectorAll('.guide-card'), opacity: [0, 1], translateY: [12, 0], delay: anime.stagger(50), duration: 400, easing: 'easeOutQuad' });
+    reveal(page.querySelector('#gg'));
   };
   draw();
   page.querySelector('.filters').addEventListener('click', (e) => {
@@ -127,7 +144,7 @@ async function pageGuide(page, id) {
 }
 
 async function pageSources(page) {
-  const sources = await getJSON('data/sources.json');
+  const [sources, links] = await Promise.all([getJSON('data/sources.json'), getJSON('data/links.json')]);
   const list = Object.entries(sources).sort((a, b) => (b[1].date || '').localeCompare(a[1].date || ''));
   page.innerHTML = `
     <div class="page-head"><div class="eyebrow">Прозрачность</div><h1>Источники</h1>
@@ -137,7 +154,8 @@ async function pageSources(page) {
       ${list.map(([, s]) => `<tr><td style="white-space:nowrap">${s.date ? fmtDate(s.date) : '—'}</td><td><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></td></tr>`).join('')}
       </tbody></table></div>
       <div class="callout">Нашли ошибку или устаревший факт? Создайте issue в репозитории сайта со ссылкой на свежий источник.</div>
-    </div>`;
+    </div>
+    <section class="section"><div class="section-head"><h2>Полезные ссылки</h2></div>${linkCards(links.links)}</section>`;
 }
 
 // ===== Роутер =====
@@ -156,17 +174,21 @@ async function route() {
   const fn = routes[section] || pageHome;
   document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home')));
   srcTips.forEach((t) => t.destroy()); srcTips = [];
+  const first = !routed;
   if (routed) hideBubble();
   routed = true;
+  moveNavPill();
   const page = document.createElement('div');
-  view.replaceChildren(page);
-  try { await fn(page, id && decodeURIComponent(id)); }
-  catch (err) {
-    console.error(err);
-    page.innerHTML = `<div class="frame article"><h2>Не удалось загрузить раздел</h2><p class="muted">${esc(err.message)}</p><p>Если вы открыли файл напрямую с диска, запустите локальный сервер (см. README).</p></div>`;
-  }
-  if (section !== 'ui') anime({ targets: page, opacity: [0, 1], duration: 300, easing: 'linear' });
-  scrollTo({ top: 0 });
+  await transition(first, async () => {
+    view.replaceChildren(page);
+    try { await fn(page, id && decodeURIComponent(id)); }
+    catch (err) {
+      console.error(err);
+      page.innerHTML = `<div class="frame article"><h2>Не удалось загрузить раздел</h2><p class="muted">${esc(err.message)}</p><p>Если вы открыли файл напрямую с диска, запустите локальный сервер (см. README).</p></div>`;
+    }
+    if (lenis) lenis.scrollTo(0, { immediate: true }); else scrollTo({ top: 0 });
+  });
+  reveal(page);
   view.focus({ preventScroll: true });
 }
 
@@ -175,13 +197,14 @@ async function initSearch() {
   const dlg = document.getElementById('searchDlg');
   const input = document.getElementById('searchInput');
   const out = document.getElementById('searchResults');
-  const [raids, screens] = await Promise.all([getJSON('data/raids.json').catch(() => ({ raids: [] })), getJSON('data/screens.json').catch(() => ({ screens: [] }))]);
+  const [raids, screens, links] = await Promise.all([getJSON('data/raids.json').catch(() => ({ raids: [] })), getJSON('data/screens.json').catch(() => ({ screens: [] })), getJSON('data/links.json').catch(() => ({ links: [] }))]);
   const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   const docs = [
     ...GUIDES.map((g) => ({ title: g.title, sub: 'Гайд · ' + g.tag, text: g.summary + ' ' + strip(g.body), href: '#/guides/' + g.id })),
     ...raids.raids.map((r) => ({ title: r.name, sub: 'Калькулятор золота', text: r.notes || '', href: '#/gold' })),
     ...screens.screens.flatMap((s) => [{ title: s.title, sub: 'Интерфейс', text: '', href: '#/ui/' + s.id },
       ...(s.hotspots || []).map((h) => ({ title: h.title, sub: 'Интерфейс · ' + s.title, text: h.text, href: '#/ui/' + s.id }))]),
+    ...links.links.map((l) => ({ title: l.title, sub: 'Полезная ссылка · ' + l.domain, text: l.desc, href: l.url, ext: true })),
     { title: 'Чек-лист дел', sub: 'Инструмент', text: 'ежедневные еженедельные сброс', href: '#/checklist' },
     { title: 'Источники', sub: 'Справка', text: 'lostark.ru патчноуты', href: '#/sources' },
   ];
@@ -189,15 +212,16 @@ async function initSearch() {
   const draw = () => {
     const q = input.value.trim();
     const res = q ? fuse.search(q).slice(0, 8).map((r) => r.item) : docs.slice(0, 6);
-    out.innerHTML = res.length ? res.map((d) => `<li><a href="${d.href}">${esc(d.title)}<small>${esc(d.sub)}</small></a></li>`).join('') : '<li class="none">Ничего не нашлось. Попробуйте другое слово.</li>';
+    out.innerHTML = res.length ? res.map((d) => `<li><a href="${esc(d.href)}"${d.ext ? ' target="_blank" rel="noopener"' : ''}>${esc(d.title)}<small>${esc(d.sub)}</small></a></li>`).join('') : '<li class="none">Ничего не нашлось. Попробуйте другое слово.</li>';
   };
-  const open = () => { input.value = ''; draw(); dlg.showModal(); input.focus(); };
+  const open = () => { input.value = ''; draw(); lenis?.stop(); dlg.showModal(); input.focus(); };
+  dlg.addEventListener('close', () => lenis?.start());
   document.getElementById('searchBtn').addEventListener('click', open);
   addEventListener('keydown', (e) => {
     if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); open(); }
   });
   input.addEventListener('input', draw);
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const a = out.querySelector('a'); if (a) { location.hash = a.getAttribute('href'); dlg.close(); } } });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const a = out.querySelector('a'); if (a) { a.click(); dlg.close(); } } });
   out.addEventListener('click', (e) => { if (e.target.closest('a')) dlg.close(); });
   dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
 }
@@ -211,7 +235,11 @@ document.getElementById('themeBtn').addEventListener('click', () => {
 });
 
 // ===== Старт =====
+intro();
+initFX();
 initBackground(document.getElementById('bg'));
+addEventListener('resize', moveNavPill);
+document.fonts?.ready.then(moveNavPill);
 initMascot();
 addEventListener('hashchange', route);
 route();

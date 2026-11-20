@@ -390,3 +390,165 @@ label.lbl { font-size: 12px; font-weight: 700; color: var(--muted); text-transfo
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* =========================================================
+   Эффекты и плавность
+   ========================================================= */
+:root { --ease-out: cubic-bezier(.22, 1, .36, 1); }
+
+/* Прогресс прокрутки */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 70;
+  transform-origin: 0 50%; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--accent), var(--gold-hi), var(--gold));
+  box-shadow: 0 0 10px rgba(240, 215, 150, .6);
+}
+
+/* Шапка сжимается при прокрутке */
+.topbar { transition: padding .35s var(--ease-out), box-shadow .35s, background .35s; }
+.topbar.scrolled { padding-top: 6px; padding-bottom: 6px; box-shadow: 0 8px 30px rgba(0, 0, 0, .35); }
+.brand-mark { transition: transform .5s var(--ease-out); }
+.brand:hover .brand-mark { transform: rotate(-12deg) scale(1.12); }
+
+/* Подложка активного пункта меню едет к нему */
+.nav { position: relative; }
+.nav a { position: relative; z-index: 1; }
+.nav a.active { background: none; color: #1a1408; }
+:root[data-theme="light"] .nav a.active { color: #fffaf0; }
+.nav-pill {
+  position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; z-index: 0; opacity: 0;
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold));
+  box-shadow: 0 0 18px rgba(240, 215, 150, .35);
+  transition: transform .5s var(--ease-out), width .5s var(--ease-out), opacity .3s;
+}
+
+/* Свечение под курсором */
+.cursor-glow {
+  position: fixed; left: -220px; top: -220px; width: 440px; height: 440px; border-radius: 50%;
+  pointer-events: none; z-index: -1;
+  background: radial-gradient(circle, rgba(240, 215, 150, .09) 0%, rgba(143, 209, 106, .04) 35%, transparent 70%);
+}
+:root[data-theme="light"] .cursor-glow { background: radial-gradient(circle, rgba(154, 115, 48, .1) 0%, transparent 65%); }
+
+/* Кнопки: блик и волна */
+.btn, .chip, .icon-btn, .nav a { position: relative; overflow: hidden; isolation: isolate; }
+.btn::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%; z-index: -1;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .45), transparent);
+  transform: skewX(-20deg); transition: left .7s var(--ease-out);
+}
+.btn:hover::after { left: 130%; }
+.ripple { position: absolute; border-radius: 50%; pointer-events: none; background: currentColor; z-index: 0; }
+
+/* Карточки: 3D-наклон и блик под курсором */
+.tile, .guide-card, .link-card {
+  transform-style: preserve-3d; will-change: transform;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(0);
+  transition: transform .6s var(--ease-out), border-color .3s, box-shadow .4s;
+}
+.tile.tilting, .guide-card.tilting, .link-card.tilting {
+  transition: transform .12s linear, border-color .3s, box-shadow .4s;
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-4px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow), 0 0 30px rgba(240, 215, 150, .12);
+}
+.tile:hover, .guide-card:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-4px); }
+.tile > *, .guide-card > *, .link-card > * { position: relative; z-index: 1; }
+.tile, .guide-card, .link-card { overflow: hidden; }
+.tilting { background-image: radial-gradient(circle at var(--mx) var(--my), rgba(240, 215, 150, .13) 0%, transparent 55%) !important; }
+.tile .t-ico { display: inline-block; transition: transform .5s var(--ease-out), text-shadow .4s; }
+.tile:hover .t-ico { transform: translateZ(30px) scale(1.2) rotate(-8deg); text-shadow: 0 0 16px rgba(240, 215, 150, .7); }
+
+/* Полезные ссылки */
+.link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.link-card { display: flex; flex-direction: column; gap: 8px; padding: 20px; text-decoration: none; color: var(--text); }
+.link-card h3 { margin: 4px 0 0; font-size: 23px; color: var(--text); }
+.link-card p { margin: 0; color: var(--muted); font-size: 14px; }
+.link-card .lc-note { font-size: 12px; }
+.lc-top { display: flex; justify-content: space-between; align-items: center; }
+.lc-ico {
+  width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-size: 20px;
+  color: var(--gold-hi); border: 1px solid var(--line-strong); background: rgba(201, 164, 92, .08);
+  transition: transform .5s var(--ease-out), box-shadow .4s;
+}
+.link-card:hover .lc-ico { transform: rotate(-10deg) scale(1.1); box-shadow: 0 0 20px rgba(240, 215, 150, .3); }
+.lc-foot { margin-top: auto; padding-top: 10px; display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+.lc-go { color: var(--gold-hi); font-weight: 700; transition: transform .4s var(--ease-out); }
+.link-card:hover .lc-go { transform: translateX(4px); }
+
+/* Рамки «оживают» при наведении */
+.frame::before, .frame::after { transition: width .5s var(--ease-out), height .5s var(--ease-out), opacity .4s; }
+.frame:hover::before, .frame:hover::after { width: 34px; height: 34px; opacity: 1; }
+
+/* Главная: параллакс арта и мерцание колец */
+.hero-art { transform: translateY(calc(var(--scroll, 0) * -0.12px)); }
+.hero-art .ring { animation: ring-breathe 5s ease-in-out infinite; }
+.hero-art .ring.r3 { animation-delay: -2.5s; }
+@keyframes ring-breathe { 0%, 100% { box-shadow: 0 0 0 0 rgba(240, 215, 150, 0); } 50% { box-shadow: 0 0 40px 2px rgba(240, 215, 150, .12), inset 0 0 30px rgba(143, 209, 106, .06); } }
+.hero h1 span {
+  background: linear-gradient(100deg, var(--gold) 0%, var(--gold-hi) 40%, #fff6d8 50%, var(--gold-hi) 60%, var(--gold) 100%);
+  background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+.patch-badge i { animation: blink 2s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .35; } }
+
+/* Монетки и волны */
+.fly-coin {
+  position: fixed; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; z-index: 80; pointer-events: none;
+  background: radial-gradient(circle at 35% 35%, #fff4c0, #f2c94c 45%, #a37a1c);
+  box-shadow: 0 0 8px rgba(242, 201, 76, .6);
+}
+.ring-wave {
+  position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; pointer-events: none;
+  border: 2px solid var(--gold-hi); box-shadow: 0 0 16px rgba(240, 215, 150, .6);
+}
+.big-gold .coin { animation: coin-spin 6s linear infinite; }
+@keyframes coin-spin { 0%, 85% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
+
+/* Поля ввода и чекбоксы */
+input, select, textarea { transition: border-color .25s, box-shadow .25s, background .25s; }
+.task { transition: background .3s, opacity .3s; }
+.task label { transition: color .3s; }
+.chip { transition: color .25s, border-color .25s, background .25s, transform .2s; }
+.chip:hover { transform: translateY(-1px); }
+.screen-list a { transition: background .3s, color .3s, padding .3s var(--ease-out); }
+.screen-list a:hover { padding-left: 16px; color: var(--text); }
+.hotspot { transition: background .25s, border-color .25s, opacity .35s; }
+.search-results a { transition: background .2s, padding .3s var(--ease-out); }
+.search-results a:hover, .search-results a:focus { padding-left: 18px; }
+.search-dlg[open] { animation: dlg-in .35s var(--ease-out); }
+.search-dlg[open]::backdrop { animation: fade-in .3s ease; }
+@keyframes dlg-in { from { opacity: 0; transform: translateY(-14px) scale(.98); } }
+@keyframes fade-in { from { opacity: 0; } }
+.tabbar a { transition: color .3s, transform .3s var(--ease-out); }
+.tabbar a.active { transform: translateY(-2px); }
+.tabbar a.active span { text-shadow: 0 0 12px rgba(240, 215, 150, .7); }
+
+/* Переход страниц (View Transitions API) */
+::view-transition-old(root) { animation: vt-out .18s ease-in both; }
+::view-transition-new(root) { animation: vt-in .38s var(--ease-out) both; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }
+.topbar { view-transition-name: topbar; }
+.tabbar { view-transition-name: tabbar; }
+.mascot { view-transition-name: mascot; }
+#bg { view-transition-name: bg; }
+
+/* Заставка */
+.intro { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--bg); }
+.intro-inner { display: grid; justify-items: center; gap: 14px; }
+.intro img { width: 120px; height: 120px; filter: drop-shadow(0 10px 30px rgba(143, 209, 106, .35)); }
+.intro-title { font: 700 34px var(--font-head); }
+.intro-title em { color: var(--accent); font-style: normal; }
+.intro-line { width: 160px; height: 2px; background: var(--line); overflow: hidden; border-radius: 2px; }
+.intro-line i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--gold-hi)); transform-origin: 0 50%; transform: scaleX(0); }
+
+@media (max-width: 760px) {
+  .hero-art { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile, .guide-card, .link-card { transform: none !important; }
+  .hero-art { transform: none; }
+}

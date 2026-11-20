@@ -1,6 +1,8 @@
 // Калькулятор недельного золота.
 import anime from 'animejs';
 import { load, save, esc, fmt, fmtDate, getJSON } from './store.js';
+import { coinBurst } from './fx.js';
+let lastTotal = null;
 
 let chart;
 const vals0 = (per, roster) => roster > 0 || per.some((p) => p.total > 0);
@@ -19,6 +21,7 @@ function defaultState() {
 }
 
 export async function renderGold(view) {
+  lastTotal = null;
   const [data, sources] = await Promise.all([getJSON('data/raids.json'), getJSON('data/sources.json')]);
   const st = Object.assign(defaultState(), load('gold', {}));
   const raids = data.raids.filter((r) => !r.available?.to || r.available.to >= today());
@@ -148,7 +151,9 @@ export async function renderGold(view) {
       <div class="chart-box"><canvas id="goldChart" aria-label="Доля золота по персонажам"></canvas></div>`;
 
     const num = el.querySelector('#totalNum');
-    const prev = Number(num.dataset.v || 0);
+    const prev = lastTotal ?? 0;
+    if (lastTotal != null && total > lastTotal) coinBurst(el.querySelector('.coin'), Math.min(24, 8 + Math.round((total - lastTotal) / 4000)));
+    lastTotal = total;
     const obj = { v: prev };
     anime({ targets: obj, v: total, duration: 600, easing: 'easeOutExpo', update: () => { num.textContent = fmt(obj.v); } });
 

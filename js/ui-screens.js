@@ -2,6 +2,7 @@
 import anime from 'animejs';
 import { load, save, esc, getJSON, toast } from './store.js';
 import { say, hop } from './mascot.js';
+import { ringAt } from './fx.js';
 
 let tips = [];
 const isNarrow = () => matchMedia('(max-width: 760px)').matches;
@@ -114,6 +115,8 @@ function drawStage(host, state) {
 
 function activate(btn, h, state, host) {
   btn.classList.add('active');
+  const stage = btn.parentElement, sr = stage.getBoundingClientRect(), br = btn.getBoundingClientRect();
+  ringAt(stage, br.left - sr.left + br.width / 2, br.top - sr.top + br.height / 2);
   anime({ targets: btn, scale: [1, 1.06, 1], duration: 400, easing: 'easeOutQuad' });
   if (!state.seen.includes(h.id)) {
     state.seen.push(h.id);
