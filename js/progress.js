@@ -49,7 +49,7 @@ const N = {
   cores: { kind: 'action', short: 'Реликтовые ядра', title: 'Реликтовые ядра', text: 'Возьмите из события или выбейте с рейдов реликтовые ядра.', icons: [T.core], next: 'corePts', x: 160, y: 680 },
   corePts: { kind: 'goal', short: 'Очки ядер', title: 'Цель по ядрам', goals: [['Красные ядра', '17+ очков', '#ff5a5a'], ['Синие ядра', '14+ очков', '#4fb0ff']], advice: 'Совет: сначала роллите руниты «Ропот» и «Обет», не обращая внимания на боковые статы, — сосредоточьтесь на набивании очков в ядра.', icons: [T.ropot, T.obet], next: 'hone1730', x: 160, y: 760 },
   hone1730: { kind: 'action', short: 'Точить в 1730', title: 'Точите персонажа в 1730', text: 'Ядра готовы — дотачивайте персонажа до 1730.', icons: [I('honing-chest')], next: 'm1730', nextLabel: 'Дошёл до 1730 →', alt: 'scrolls', altLabel: 'Не хватает — снова к свиткам', x: 160, y: 840 },
-  m1730: { kind: 'milestone', ilvl: 1730, short: '1730', title: '1730 — готово!', text: 'Цель достигнута. Путь дальше — до 1750 — появится здесь позже.', next: 'start', nextLabel: '↺ Пройти заново', final: true, x: 340, y: 840 },
+  m1730: { kind: 'milestone', ilvl: 1730, short: '1730', title: '1730 — готово!', text: 'Цель достигнута. Путь дальше — до 1750 — появится здесь позже.', next: 'start', nextLabel: '↺ Пройти заново', final: true, x: 160, y: 930 },
 };
 const EDGES = [
   ['start', 'scrolls'], ['scrolls', 'honeHigh', 'да'], ['scrolls', 'books', 'нет'],
@@ -61,16 +61,20 @@ const KIND = { question: ['Вопрос', '#f0d796', 'game-icons:help'], action:
 
 function edgePath(a, b, loop) {
   const A = N[a], B = N[b];
-  if (loop) { // петля назад к «Свиткам» — дугой справа
-    const x = Math.max(A.x, B.x) + 50;
-    return `M${A.x + 58},${A.y} C${x + 40},${A.y} ${x + 40},${B.y} ${B.x + 62},${B.y}`;
+  if (loop) {
+    if (Math.abs(A.y - B.y) < 20) { // короткая петля на одном уровне — прямая пунктирная
+      const dir = B.x > A.x ? 1 : -1;
+      return `M${A.x + 60 * dir},${A.y} L${B.x - 62 * dir},${B.y}`;
+    }
+    // длинная петля назад — по правому краю схемы, чтобы не пересекать узлы
+    return `M${A.x + 60},${A.y} C505,${A.y} 505,${B.y} ${B.x + 62},${B.y}`;
   }
   const y1 = A.y + 18, y2 = B.y - 18, my = (y1 + y2) / 2;
   return `M${A.x},${y1} C${A.x},${my} ${B.x},${my} ${B.x},${y2}`;
 }
 
 function mapSVG() {
-  return `<svg viewBox="0 0 520 900" class="pg-map-svg" role="img" aria-label="Схема прокачки">
+  return `<svg viewBox="0 0 520 970" class="pg-map-svg" role="img" aria-label="Схема прокачки">
     <defs><marker id="pgArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10z" fill="currentColor"/></marker></defs>
     ${EDGES.map(([a, b, lbl, loop]) => {
       const A = N[a], B = N[b];
