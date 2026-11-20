@@ -71,7 +71,7 @@ export async function renderPromo(page) {
           ${c.check ? '<p class="pc-check">⚠ Часть данных не удалось прочитать автоматически — проверьте в новости на lostark.ru.</p>' : ''}
           ${!c.items?.length ? '' : ''}
           ${c.items?.length ? `<ul class="rw pc-items">${c.items.map((it) => `<li>${rewardIcon(it)}<span>${esc(it)}</span></li>`).join('')}</ul>` : ''}
-          ${c.image ? `<a class="pc-img" href="${esc(imgSrc(c.image))}" target="_blank" rel="noopener" title="Состав набора — открыть крупно"><img src="${esc(imgSrc(c.image))}" data-fallback="${esc(c.imageOrig || c.image)}" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}" alt="Состав набора ${esc(c.code)}" loading="lazy"><span>Состав набора · нажмите, чтобы увеличить</span></a>` : ''}
+          ${c.image ? `<button type="button" class="pc-img" data-zoom title="Состав набора — открыть крупно"><img src="${esc(imgSrc(c.image))}" data-fallback="${esc(c.imageOrig || c.image)}" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}" alt="Состав набора ${esc(c.code)}" loading="lazy"><span><iconify-icon icon="game-icons:magnifying-glass"></iconify-icon> Состав набора · нажмите, чтобы увеличить</span></button>` : ''}
           <div class="pc-actions">
             ${live ? `<a class="btn sm" href="${esc(data.activateUrl)}?code=${encodeURIComponent(c.code)}" target="_blank" rel="noopener">Активировать этот код ↗</a>` : ''}
             ${src ? `<a class="m-src" href="${esc(src.url)}" target="_blank" rel="noopener">ⓘ ${esc(src.title)} · ${fmtDate(src.date)}</a>` : ''}
@@ -82,7 +82,33 @@ export async function renderPromo(page) {
     <div class="callout">Нашли новый код в новостях lostark.ru? Его можно добавить в файл <code>data/promocodes.json</code>. Коды с агрегаторов не публикуем — там много устаревших.</div>`;
 
   anime({ targets: page.querySelectorAll('.promo-card'), opacity: [0, 1], translateY: [16, 0], delay: anime.stagger(80), duration: 450, easing: 'easeOutCubic' });
+  // просмотр картинки прямо на сайте: тап по картинке — увеличить, ещё тап — вписать в экран
+  const lb = document.createElement('dialog');
+  lb.className = 'lightbox zoomable';
+  page.appendChild(lb);
+  lb.addEventListener('click', (e) => {
+    if (e.target.closest('.lb-x') || e.target === lb) { lb.close(); return; }
+    const img = e.target.closest('.lb-img');
+    if (img) {
+      const zoom = !lb.classList.contains('zoomed');
+      const box = lb.querySelector('.lb-scroll'), r = img.getBoundingClientRect();
+      const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+      lb.classList.toggle('zoomed', zoom);
+      if (zoom) requestAnimationFrame(() => { box.scrollLeft = fx * box.scrollWidth - box.clientWidth / 2; box.scrollTop = fy * box.scrollHeight - box.clientHeight / 2; });
+    }
+  });
+  const openZoom = (src, alt) => {
+    lb.classList.remove('zoomed');
+    lb.innerHTML = `<button class="lb-x" aria-label="Закрыть">×</button>
+      <div class="lb-scroll" data-lenis-prevent><img class="lb-img" src="${esc(src)}" alt="${esc(alt)}"></div>
+      <p>${esc(alt)} · нажмите на картинку, чтобы увеличить или уменьшить</p>`;
+    lb.showModal();
+    anime({ targets: lb, opacity: [0, 1], scale: [.96, 1], duration: 280, easing: 'easeOutQuad' });
+  };
+
   page.addEventListener('click', async (e) => {
+    const z = e.target.closest('[data-zoom]');
+    if (z) { const im = z.querySelector('img'); openZoom(im.currentSrc || im.src, im.alt); return; }
     const b = e.target.closest('[data-copy]'); if (!b) return;
     const ok = await copy(b.dataset.copy);
     toast(ok ? `Скопировано: ${b.dataset.copy}` : 'Не удалось скопировать — выделите код вручную');
