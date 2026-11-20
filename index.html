@@ -43,9 +43,16 @@
       <a href="#/guides" data-nav="guides">Гайды</a>
       <a href="#/gold" data-nav="gold">Золото</a>
       <a href="#/mechanics" data-nav="mechanics">Механики</a>
+      <a href="#/classes" data-nav="classes">Классы</a>
+      <a href="#/bosses" data-nav="bosses">Боссы</a>
       <a href="#/events" data-nav="events">События</a>
-      <a href="#/checklist" data-nav="checklist">Чек-лист</a>
-      <a href="#/sources" data-nav="sources">Источники</a>
+      <div class="nav-more">
+        <button type="button" class="nav-more-btn" data-nav="nav-more">Ещё ▾</button>
+        <div class="nav-drop">
+          <a href="#/checklist" data-nav="checklist">Чек-лист</a>
+          <a href="#/sources" data-nav="sources">Источники и ссылки</a>
+        </div>
+      </div>
     </nav>
     <div class="top-actions">
       <button class="icon-btn" id="searchBtn" aria-label="Поиск (/)" title="Поиск (/)">
@@ -70,6 +77,8 @@
     <div class="sheet-panel">
       <div class="sheet-grab"></div>
       <a href="#/mechanics" data-nav="mechanics"><span>✴</span>Механики</a>
+      <a href="#/classes" data-nav="classes"><span>⚔</span>Классы</a>
+      <a href="#/bosses" data-nav="bosses"><span>☠</span>Боссы</a>
       <a href="#/gold" data-nav="gold"><span>◉</span>Золото</a>
       <a href="#/checklist" data-nav="checklist"><span>✓</span>Чек-лист</a>
       <a href="#/sources" data-nav="sources"><span>ⓘ</span>Источники и ссылки</a>
@@ -94,12 +103,13 @@
   </dialog>
 
   <footer class="footer">
-    Фанатский некоммерческий сайт. Lost Ark — товарный знак правообладателей; сайт с ними не связан. Данные сверены с lostark.ru, дата проверки указана у каждого раздела.
+    Фанатский некоммерческий сайт. Lost Ark — товарный знак правообладателей; сайт с ними не связан. Данные сверены с lostark.ru, дата проверки указана у каждого раздела. Арты, видео и иконки классов и боссов — © Smilegate / lostark.ru. Иконки интерфейса — game-icons.net (CC BY 3.0).
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@
 export const GUIDES = [
   {
     id: 'outdated',
+    cover: 'assets/bosses/kamen-poster.webp',
     title: 'Старые гайды врут: что убрали и поменяли',
     tag: 'Важно',
     icon: '⚠',
@@ -34,6 +35,7 @@ export const GUIDES = [
   },
   {
     id: 'raids-now',
+    cover: 'assets/bosses/belgardin-poster.webp',
     title: 'Рейды конца 2026: куда пустят по уровню',
     tag: 'Рейды',
     icon: '☠',
@@ -58,7 +60,7 @@ export const GUIDES = [
 
 <h3>Что важно знать новичку</h3>
 <ul>
-  <li><b>Экспедиция</b> — кооперативный режим рейда Теней. Для «Зерки» — от 1 до 4 игроков; золото и ресурсы как в обычном режиме, но нет аукциона в конце и не выдаётся энергия эсдо.<span class="src" data-src="news-2613"></span> Для «Бельгардина» — соло или группа 1–7 через «Найти группу».<span class="src" data-src="news-2676"></span></li>
+  <li><b>Экспедиция</b> — облегчённый режим рейда Теней: проходится <b>в одиночку или группой из 4 или 8 человек</b> — состав зависит от рейда. Золото и ресурсы как в обычном режиме, но нет аукциона в конце и не выдаётся энергия эсдо.<span class="src" data-src="news-2613"></span></li>
   <li>Для «Бельгардина» и «Сакра-Финистрии» нужно пройти задание Кадарума <b>«Когда затих колокол»</b>.<span class="src" data-src="news-2676"></span></li>
   <li>Новый слот снаряжения — <b>манжеты</b>: выдаются за первое прохождение 2-й фазы «Бельгардина» на любой сложности, слот открывается с 1750.<span class="src" data-src="news-2676"></span></li>
   <li>Регион <b>архипелаг Кадарум</b> требует 1700 и задание «Сквозь любые бури».<span class="src" data-src="history"></span></li>
@@ -67,6 +69,7 @@ export const GUIDES = [
   },
   {
     id: 'gold-basics',
+    cover: 'assets/bosses/kazeros-poster.webp',
     title: 'Золото: обычное, персональное и экстрим-рейды',
     tag: 'Экономика',
     icon: '◉',
@@ -95,6 +98,7 @@ export const GUIDES = [
   },
   {
     id: 'classes-new',
+    cover: 'assets/classes/dimensionmaster-art.webp',
     title: 'Новые классы 2025–2026',
     tag: 'Классы',
     icon: '✸',
@@ -114,6 +118,7 @@ export const GUIDES = [
   },
   {
     id: 'updates',
+    cover: 'assets/bosses/zerka-poster.webp',
     title: 'Летопись обновлений 2025–2026',
     tag: 'Справка',
     icon: '❖',
@@ -142,6 +147,7 @@ export const GUIDES = [
   },
   {
     id: 'how-to-site',
+    cover: 'assets/screens/demo.svg',
     title: 'Как пользоваться сайтом',
     tag: 'Старт',
     icon: '✦',

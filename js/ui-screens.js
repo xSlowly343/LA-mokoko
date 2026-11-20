@@ -5,6 +5,7 @@ import { say, hop } from './mascot.js';
 import { ringAt } from './fx.js';
 
 let tips = [];
+let listScroll = 0;
 const isNarrow = () => matchMedia('(max-width: 760px)').matches;
 
 function destroyTips() { tips.forEach((t) => t.destroy()); tips = []; }
@@ -45,6 +46,14 @@ export async function renderUI(view, screenId) {
       </section>
     </div>`;
 
+  const list = view.querySelector('.screen-list');
+  list.scrollLeft = listScroll;
+  list.addEventListener('scroll', () => { listScroll = list.scrollLeft; }, { passive: true });
+  const on = list.querySelector('a.on');
+  if (on) {
+    const lr = list.getBoundingClientRect(), ar = on.getBoundingClientRect();
+    if (ar.left < lr.left || ar.right > lr.right) list.scrollTo({ left: list.scrollLeft + ar.left - lr.left - 16, behavior: 'smooth' });
+  }
   const host = view.querySelector('#stageHost');
   const state = { screen, seen, editing: false };
   drawStage(host, state);
@@ -125,12 +134,13 @@ function wireHotspots(stage, hs, state, host) {
         animation: 'shift-away', placement: 'auto', maxWidth: 320, appendTo: document.body,
         onShow() { activate(btn, h, state, host); },
         onHide() { btn.classList.remove('active'); },
+        onHidden() { maybeDone(state); },
       }));
     } else {
       btn.addEventListener('click', () => {
         stage.querySelectorAll('.hotspot.active').forEach((b) => b.classList.remove('active'));
         activate(btn, h, state, host);
-        say(esc(h.title), `<p>${esc(h.text).replace(/\n/g, '<br>')}</p>${h.tip ? `<p class="tip-adv">✦ ${esc(h.tip)}</p>` : ''}`);
+        say(esc(h.title), `${h.key ? `<p>Клавиши: <kbd>${esc(h.key)}</kbd></p>` : ''}<p>${esc(h.text).replace(/\n/g, '<br>')}</p>${h.tip ? `<p class="tip-adv">✦ ${esc(h.tip)}</p>` : ''}`, { onClose: () => maybeDone(state) });
       });
     }
   });
@@ -147,10 +157,14 @@ function activate(btn, h, state, host) {
     btn.classList.add('seen');
     updateProgress(host, state);
     hop();
-    if (state.seen.length === state.screen.hotspots.length) {
-      setTimeout(() => say('Экран изучен!', '<p>Вы посмотрели все зоны этого экрана. Переходите к следующему в списке слева.</p>'), 600);
-    }
+    if (state.seen.length === state.screen.hotspots.length) state.pendingDone = true;
   }
+}
+
+function maybeDone(state) {
+  if (!state.pendingDone) return;
+  state.pendingDone = false;
+  setTimeout(() => say('Экран изучен!', '<p>Вы посмотрели все зоны этого экрана. Переходите к следующему в списке разделов.</p>'), 250);
 }
 
 function updateProgress(host, state) {

@@ -10,6 +10,8 @@ import { renderGold } from './gold.js';
 import { renderChecklist } from './checklist.js';
 import { renderEvents, liveEvents, left, endOf } from './events.js';
 import { renderMechanics, MECH_INDEX } from './mechanics.js';
+import { renderClasses, classIndex } from './classes.js';
+import { renderBosses, bossIndex } from './bosses.js';
 import { initFX, reveal, transition, moveNavPill, intro, lenis } from './fx.js';
 
 const view = document.getElementById('view');
@@ -56,6 +58,8 @@ function pageHome(page) {
       <a class="tile frame" href="#/checklist"><div class="t-ico">✓</div><h3>Чек-лист</h3><p>Ежедневные и еженедельные дела с автосбросом.</p></a>
       <a class="tile frame" href="#/mechanics"><div class="t-ico">✴</div><h3>Механики</h3><p>Изнурение, разрушение, контратака, парирование — в анимациях.</p></a>
       <a class="tile frame" href="#/events"><div class="t-ico">☄</div><h3>События</h3><p>Что идёт сейчас, сколько осталось и какие награды.</p></a>
+      <a class="tile frame" href="#/classes"><div class="t-ico">⚔</div><h3>Классы</h3><p>30 классов в 7 архетипах — официальные описания.</p></a>
+      <a class="tile frame" href="#/bosses"><div class="t-ico">☠</div><h3>Боссы</h3><p>Рейды и боссы с роликами и датами первых побед на РУ.</p></a>
     </div>
     <section class="section">
       <div class="section-head"><h2>Сейчас в игре</h2><a href="#/events">Все события →</a></div>
@@ -106,6 +110,7 @@ function linkCards(links) {
 
 function guideCard(g, read) {
   return `<a class="guide-card frame" href="#/guides/${g.id}">
+    ${g.cover ? `<div class="g-cover"><img src="${g.cover}" alt="" loading="lazy"></div>` : ''}
     <div class="g-top"><span class="tag">${esc(g.tag)}</span><span>${read.includes(g.id) ? '<span class="read-mark">✓ прочитано</span>' : `${g.minutes} мин`}</span></div>
     <h3>${esc(g.icon)} ${esc(g.title)}</h3>
     <p>${esc(g.summary)}</p>
@@ -146,6 +151,7 @@ async function pageGuide(page, id) {
   page.innerHTML = `
     <article class="article frame">
       <a href="#/guides" class="muted" style="font-size:13px">← Все гайды</a>
+      ${g.cover ? `<div class="a-cover"><img src="${g.cover}" alt=""></div>` : ''}
       <h1 style="margin-top:10px">${esc(g.title)}</h1>
       <div class="meta"><span class="tag">${esc(g.tag)}</span><span>${g.minutes} мин чтения</span><span>Проверено ${fmtDate(g.updated)}</span></div>
       ${g.body}
@@ -194,6 +200,8 @@ const routes = {
   sources: pageSources,
   mechanics: (p, id) => renderMechanics(p).then(() => id && setTimeout(() => jumpTo('#m-' + id), 50)),
   events: (p) => renderEvents(p),
+  classes: (p, id) => renderClasses(p, id),
+  bosses: (p, id) => renderBosses(p, id),
 };
 function jumpTo(sel) {
   const el = document.querySelector(sel); if (!el) return;
@@ -208,27 +216,29 @@ document.addEventListener('click', (e) => {
 });
 
 let routed = false;
+let lastSection = null;
 async function route() {
   const [, section = '', id] = (location.hash || '#/').split('/');
   const fn = routes[section] || pageHome;
-  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources'].includes(section))));
+  document.querySelectorAll('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === (section || 'home') || (a.dataset.nav === 'more' && ['mechanics', 'gold', 'checklist', 'sources', 'classes', 'bosses'].includes(section)) || (a.dataset.nav === 'nav-more' && ['checklist', 'sources'].includes(section))));
   closeSheet();
   srcTips.forEach((t) => t.destroy()); srcTips = [];
   const first = !routed;
-  if (routed) hideBubble();
+  if (routed) hideBubble(true);
   routed = true;
   moveNavPill();
   const page = document.createElement('div');
-  await transition(first, async () => {
+  await transition(first || (section === 'ui' && lastSection === 'ui'), async () => {
     view.replaceChildren(page);
     try { await fn(page, id && decodeURIComponent(id)); }
     catch (err) {
       console.error(err);
       page.innerHTML = `<div class="frame article"><h2>Не удалось загрузить раздел</h2><p class="muted">${esc(err.message)}</p><p>Если вы открыли файл напрямую с диска, запустите локальный сервер (см. README).</p></div>`;
     }
-    if (lenis) lenis.scrollTo(0, { immediate: true }); else scrollTo({ top: 0 });
+    if (!(section === 'ui' && lastSection === 'ui')) { if (lenis) lenis.scrollTo(0, { immediate: true }); else scrollTo({ top: 0 }); }
   });
   reveal(page);
+  lastSection = section;
   view.focus({ preventScroll: true });
 }
 
@@ -239,6 +249,7 @@ async function initSearch() {
   const out = document.getElementById('searchResults');
   const [raids, screens, links] = await Promise.all([getJSON('data/raids.json').catch(() => ({ raids: [] })), getJSON('data/screens.json').catch(() => ({ screens: [] })), getJSON('data/links.json').catch(() => ({ links: [] }))]);
   const events = await getJSON('data/events.json').catch(() => ({ events: [] }));
+  const [clsIdx, bossIdx] = await Promise.all([classIndex().catch(() => []), bossIndex().catch(() => [])]);
   const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   const docs = [
     ...GUIDES.map((g) => ({ title: g.title, sub: 'Гайд · ' + g.tag, text: g.summary + ' ' + strip(g.body), href: '#/guides/' + g.id })),
@@ -248,6 +259,7 @@ async function initSearch() {
     ...links.links.map((l) => ({ title: l.title, sub: 'Полезная ссылка · ' + l.domain, text: l.desc, href: l.url, ext: true })),
     ...MECH_INDEX.map((m) => ({ title: m.name, sub: 'Механика', text: m.text, href: '#/mechanics/' + m.id })),
     ...(events.events || []).map((e) => ({ title: e.title, sub: 'Событие · ' + e.kind, text: (e.how || []).join(' ') + ' ' + e.rewards.flatMap((r) => r.items).join(' '), href: '#/events' })),
+    ...clsIdx, ...bossIdx,
     { title: 'Чек-лист дел', sub: 'Инструмент', text: 'ежедневные еженедельные сброс', href: '#/checklist' },
     { title: 'Источники', sub: 'Справка', text: 'lostark.ru патчноуты', href: '#/sources' },
   ];
@@ -280,7 +292,7 @@ function closeSheet() {
 document.getElementById('moreBtn')?.addEventListener('click', () => {
   if (!sheet.hidden) { closeSheet(); return; }
   sheet.hidden = false;
-  hideBubble();
+  hideBubble(true);
   document.body.classList.add('sheet-open');
   anime({ targets: sheet, opacity: [0, 1], duration: 200, easing: 'linear' });
   anime({ targets: sheet.querySelector('.sheet-panel'), translateY: [300, 0], duration: 420, easing: 'easeOutCubic' });

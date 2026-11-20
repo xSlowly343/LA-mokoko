@@ -84,7 +84,7 @@ export function initFX() {
 export function moveNavPill() {
   const nav = document.querySelector('.nav');
   const pill = nav?.querySelector('.nav-pill');
-  const a = nav?.querySelector('a.active');
+  const a = nav?.querySelector(':scope > a.active, :scope > .nav-more > .nav-more-btn.active');
   if (!pill) return;
   if (!a) { pill.style.opacity = 0; return; }
   const nr = nav.getBoundingClientRect(), ar = a.getBoundingClientRect();
