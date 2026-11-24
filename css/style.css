@@ -194,7 +194,7 @@ li::marker { color: var(--accent); }
   .l-stage-row { container-type: normal; flex-direction: column; align-items: stretch; gap: 16px; }
   .l-stage { width: 100%; height: auto; }
   .l-text { height: auto; max-width: none; flex: none; scroll-margin-top: calc(var(--top) + 8px); }
-  .l-text-in { position: static; padding: 16px 18px; }
+  .l-text-in { position: static; padding: 16px 18px; overflow: visible; overscroll-behavior: auto; }
   .l-extra { padding: 40px 16px 56px; }
   .l-extra-box { padding: 16px 18px; }
   .l-why { padding: 56px 16px; }
