@@ -1,128 +1,55 @@
 <!doctype html>
-<html lang="ru" data-theme="dark">
+<html lang="ru">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Тропа мококо — гайды Lost Ark</title>
-  <meta name="description" content="Интерактивный путеводитель по Lost Ark (РУ) для новичков: разбор интерфейса, актуальные гайды с источниками, калькулятор золота и чек-лист.">
-  <meta name="theme-color" content="#0d0b12">
+  <title>Lost Ark — краткий гайд по системам развития</title>
+  <meta name="description" content="Краткий гайд по системам развития Lost Ark для новичков: снаряжение, система АРК, гравировки, самоцветы, колоды и созвездия АРК. Плюс новости, события и промокоды.">
+  <meta name="theme-color" content="#17171d">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='38' rx='22' ry='20' fill='%23cfe39a'/%3E%3Cpath d='M32 18c-4-10 4-14 10-12-2 6-6 10-10 12z' fill='%237fb24a'/%3E%3Ccircle cx='25' cy='38' r='3' fill='%23222'/%3E%3Ccircle cx='39' cy='38' r='3' fill='%23222'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/animations/shift-away.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.css">
-  <link rel="stylesheet" href="css/style.css?v=202611201015">
-  <script>
-    // тема до отрисовки, чтобы не мигало
-    try { const t = localStorage.getItem('mk-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  </script>
+  <link rel="preload" as="image" href="assets/guide/hero.webp">
+  <link rel="stylesheet" href="css/style.css?v=202611240301">
   <script type="importmap">
   {
   "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
     "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.es.js",
-    "fuse": "https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs",
     "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.mjs",
-    "./js/app.js": "./js/app.js?v=202611201015",
-    "./js/bg.js": "./js/bg.js?v=202611201015",
-    "./js/bosses.js": "./js/bosses.js?v=202611201015",
-    "./js/events.js": "./js/events.js?v=202611201015",
-    "./js/fx.js": "./js/fx.js?v=202611201015",
-    "./js/mascot.js": "./js/mascot.js?v=202611201015",
-    "./js/mechanics.js": "./js/mechanics.js?v=202611201015",
-    "./js/news.js": "./js/news.js?v=202611201015",
-    "./js/progress.js": "./js/progress.js?v=202611201015",
-    "./js/promo.js": "./js/promo.js?v=202611201015",
-    "./js/store.js": "./js/store.js?v=202611201015",
-    "./js/tooltip.js": "./js/tooltip.js?v=202611201015",
-    "./js/ui-screens.js": "./js/ui-screens.js?v=202611201015"
+    "./js/app.js": "./js/app.js?v=202611240301",
+    "./js/events.js": "./js/events.js?v=202611240301",
+    "./js/fx.js": "./js/fx.js?v=202611240301",
+    "./js/guide-data.js": "./js/guide-data.js?v=202611240301",
+    "./js/guide.js": "./js/guide.js?v=202611240301",
+    "./js/news.js": "./js/news.js?v=202611240301",
+    "./js/promo.js": "./js/promo.js?v=202611240301",
+    "./js/store.js": "./js/store.js?v=202611240301"
   }
 }
   </script>
 </head>
 <body>
-  <canvas id="bg" aria-hidden="true"></canvas>
-
   <header class="topbar">
-    <a class="brand" href="#/">
+    <a class="brand" href="#/" data-nav="home" aria-label="Гайд по Lost Ark — на главную">
       <span class="brand-mark" aria-hidden="true"></span>
       <span class="brand-text">Тропа <em>мококо</em></span>
     </a>
     <nav class="nav" aria-label="Разделы">
-      <a href="#/" data-nav="home">Главная</a>
-      <a href="#/news" data-nav="news">Новости</a>
-      <a href="#/progress" data-nav="progress">Прокачка</a>
-      <a href="#/bosses" data-nav="bosses">Рейды по ГС</a>
-      <a href="#/mechanics" data-nav="mechanics">Механики</a>
-      <a href="#/events" data-nav="events">События</a>
-      <div class="nav-more">
-        <button type="button" class="nav-more-btn" data-nav="nav-more">Ещё ▾</button>
-        <div class="nav-drop">
-          <a href="#/events" data-nav="events" class="nav-narrow">События</a>
-          <a href="#/ui" data-nav="ui">Интерфейс</a>
-          <a href="#/promo" data-nav="promo">Промокоды</a>
-          <a href="#/sources" data-nav="sources">Источники и ссылки</a>
-        </div>
-      </div>
+      <a class="nav-btn" href="#/news" data-nav="news"><iconify-icon icon="game-icons:scroll-unfurled" aria-hidden="true"></iconify-icon><span>Новости</span></a>
+      <a class="nav-btn" href="#/events" data-nav="events"><iconify-icon icon="game-icons:calendar" aria-hidden="true"></iconify-icon><span>События</span></a>
+      <a class="nav-btn" href="#/promo" data-nav="promo"><iconify-icon icon="game-icons:present" aria-hidden="true"></iconify-icon><span>Промокоды</span></a>
     </nav>
-    <div class="top-actions">
-      <a class="icon-btn promo-btn" href="#/promo" aria-label="Промокоды" title="Промокоды"><iconify-icon icon="game-icons:present"></iconify-icon></a>
-      <button class="icon-btn" id="searchBtn" aria-label="Поиск (/)" title="Поиск (/)">
-        <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <button class="icon-btn" id="themeBtn" aria-label="Сменить тему" title="Сменить тему">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/></svg>
-      </button>
-    </div>
   </header>
 
   <main id="view" tabindex="-1"></main>
 
-  <nav class="tabbar" aria-label="Разделы (мобильные)">
-    <a href="#/" data-nav="home"><span>⌂</span>Главная</a>
-    <a href="#/progress" data-nav="progress"><span>⇪</span>Прокачка</a>
-    <a href="#/bosses" data-nav="bosses"><span>☠</span>Рейды</a>
-    <a href="#/events" data-nav="events"><span>☄</span>События</a>
-    <button type="button" id="moreBtn" data-nav="more"><span>☰</span>Ещё</button>
-  </nav>
-  <div class="sheet" id="sheet" hidden>
-    <div class="sheet-panel">
-      <div class="sheet-grab"></div>
-      <a href="#/news" data-nav="news"><span>📰</span>Новости</a>
-      <a href="#/mechanics" data-nav="mechanics"><span>✴</span>Механики</a>
-      <a href="#/ui" data-nav="ui"><span>◈</span>Интерфейс</a>
-      <a href="#/promo" data-nav="promo"><span>🎁</span>Промокоды</a>
-      <a href="#/sources" data-nav="sources"><span>ⓘ</span>Источники и ссылки</a>
-    </div>
-  </div>
-
-  <div id="mascot" class="mascot" aria-live="polite">
-    <div class="bubble" id="bubble" hidden data-lenis-prevent>
-      <button class="bubble-x" aria-label="Закрыть">×</button>
-      <div class="bubble-title" id="bubbleTitle"></div>
-      <div class="bubble-text" id="bubbleText"></div>
-    </div>
-    <button class="mascot-btn" id="mascotBtn" aria-label="Мококо-помощник"><span class="mascot-img"></span></button>
-  </div>
-
-  <dialog id="searchDlg" class="search-dlg">
-    <form method="dialog" class="search-box">
-      <input id="searchInput" type="search" placeholder="Что ищем? Например: золото, Бельгардин, удалено…" autocomplete="off">
-      <button class="icon-btn" aria-label="Закрыть">✕</button>
-    </form>
-    <ul id="searchResults" class="search-results" data-lenis-prevent></ul>
-  </dialog>
-
   <footer class="footer">
-    Фанатский некоммерческий сайт. Lost Ark — товарный знак правообладателей; сайт с ними не связан. Данные сверены с lostark.ru, дата проверки указана у каждого раздела. Арты, видео и иконки классов и боссов — © Smilegate / lostark.ru. Иконки интерфейса — game-icons.net (CC BY 3.0).
+    Фанатский некоммерческий сайт. Lost Ark — товарный знак правообладателей; сайт с ними не связан. Скриншоты, арты и иконки — © Smilegate / lostark.ru. Иконки интерфейса — game-icons.net (CC BY 3.0).
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script type="module" src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
-  <script type="module" src="js/app.js?v=202611201015"></script>
+  <script type="module" src="js/app.js?v=202611240301"></script>
 </body>
 </html>

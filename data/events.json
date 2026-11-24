@@ -155,7 +155,7 @@
           ]
         }
       ],
-      "banner": "assets/bosses/kazeros-poster.webp",
+      "banner": "assets/events/kazeros-poster.webp",
       "tokens": [
         {
           "src": "assets/items/znak-grozy.webp",
