@@ -459,13 +459,51 @@ button.pc-img span {display: flex; align-items: center; gap: 6px; padding: 7px 1
 .g-go:hover, .g-go:focus-visible { filter: brightness(1.1); }
 
 /* ===== Подвал: авторы в Discord ===== */
-.credits { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 16px; }
+.credits { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-bottom: 18px; }
 .credit {
-  display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 8px 10px; border-radius: 12px;
+  --dc: #5865f2;
+  display: inline-flex; align-items: center; gap: 0; height: 54px; padding: 5px; border-radius: 999px;
   text-decoration: none; color: var(--text); text-align: left;
-  border: 1px solid var(--line); background: rgba(255, 255, 255, .03); transition: border-color .2s, background .2s;
+  border: 1px solid rgba(88, 101, 242, .35);
+  background: linear-gradient(135deg, rgba(88, 101, 242, .14), rgba(88, 101, 242, .03));
+  transition: gap .5s var(--ease-out), border-color .3s, box-shadow .4s, background .4s;
 }
-.credit:hover, .credit:focus-visible { border-color: #5865f2; background: rgba(88, 101, 242, .12); }
-.dc-ico { width: 30px; height: 30px; padding: 6px; border-radius: 50%; flex: none; color: #fff; background: #5865f2; }
-.credit b { display: block; font-size: 13px; font-weight: 600; }
-.credit small { display: block; font-size: 11.5px; color: var(--muted); }
+.credit:hover, .credit:focus-visible, .credit.open {
+  gap: 12px; border-color: rgba(120, 132, 255, .8);
+  background: linear-gradient(135deg, rgba(88, 101, 242, .26), rgba(88, 101, 242, .06));
+  box-shadow: 0 0 0 1px rgba(88, 101, 242, .25), 0 8px 28px rgba(88, 101, 242, .3);
+}
+.credit:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.dc-ring {
+  position: relative; flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 30% 25%, #8f98ff, var(--dc) 55%, #3c45c4);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 0 16px rgba(88, 101, 242, .55);
+  transition: transform .5s var(--ease-out);
+}
+.dc-ring::after {
+  content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid rgba(120, 132, 255, .7);
+  animation: dc-pulse 2.6s ease-out infinite; pointer-events: none;
+}
+.dc-ico { width: 22px; height: 22px; color: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
+.credit:hover .dc-ring, .credit:focus-visible .dc-ring { transform: rotate(-12deg) scale(1.08); }
+.credit:hover .dc-ico { animation: dc-wiggle .6s ease-in-out; }
+@keyframes dc-pulse { 0% { transform: scale(.9); opacity: .9; } 80%, 100% { transform: scale(1.35); opacity: 0; } }
+@keyframes dc-wiggle { 25% { transform: rotate(-14deg); } 60% { transform: rotate(10deg); } }
+
+/* подпись: раскрывается и проявляется по буквам */
+.credit-label { display: grid; max-width: 0; overflow: hidden; white-space: nowrap; padding-right: 0; transition: max-width .6s var(--ease-out), padding .6s var(--ease-out); }
+.credit:hover .credit-label, .credit:focus-visible .credit-label, .credit.open .credit-label { max-width: 280px; padding-right: 18px; }
+.credit-label b { font-size: 13.5px; font-weight: 700; }
+.credit-label small { font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #9aa3ff; }
+.credit-label .ch {
+  display: inline-block; white-space: pre; opacity: 0; transform: translateY(9px); filter: blur(4px);
+  transition: opacity .35s, transform .45s var(--ease-out), filter .35s;
+  transition-delay: calc(var(--i) * 18ms + 120ms);
+}
+.credit:hover .ch, .credit:focus-visible .ch, .credit.open .ch { opacity: 1; transform: none; filter: none; }
+.credit:not(:hover):not(:focus-visible):not(.open) .ch { transition-delay: 0s; }
+@media (prefers-reduced-motion: reduce) {
+  .credit-label { max-width: none; padding-right: 18px; }
+  .credit { gap: 12px; }
+  .credit-label .ch { opacity: 1; transform: none; filter: none; }
+}

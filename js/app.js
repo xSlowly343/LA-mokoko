@@ -36,7 +36,27 @@ async function route() {
   view.focus({ preventScroll: true });
 }
 
+// Подвал: подписи у Discord-кнопок проявляются по буквам.
+// При первом появлении на экране кнопки раскрываются сами; на компьютере через пару секунд
+// сворачиваются (дальше раскрываются по наведению), на телефоне остаются открытыми.
+function initCredits() {
+  const links = [...document.querySelectorAll('.credit')];
+  links.forEach((a) => a.querySelectorAll('.credit-label b, .credit-label small').forEach((el) => {
+    let i = el.tagName === 'SMALL' ? 8 : 0;
+    el.innerHTML = [...el.textContent].map((c) => `<span class="ch" style="--i:${i++}">${esc(c)}</span>`).join('');
+  }));
+  const hover = matchMedia('(hover: hover)').matches;
+  const io = new IntersectionObserver((es) => {
+    if (!es.some((e) => e.isIntersecting)) return;
+    io.disconnect();
+    links.forEach((a, k) => setTimeout(() => a.classList.add('open'), k * 250));
+    if (hover) setTimeout(() => links.forEach((a) => a.classList.remove('open')), 3200);
+  }, { threshold: 0.6 });
+  if (links.length) io.observe(links[0].parentElement);
+}
+
 initFX();
+initCredits();
 addEventListener('hashchange', route);
 markNewInNav();
 setInterval(markNewInNav, 30 * 60e3);
