@@ -64,7 +64,9 @@ export function renderGuide(page) {
     stage.parentElement.style.setProperty('--ar', `${sec.w} / ${sec.h}`);
     stage.parentElement.style.setProperty('--arn', sec.w / sec.h);
     stage.innerHTML = `<img src="assets/guide/${sec.image}.webp" alt="${sec.alt}" width="${sec.w}" height="${sec.h}">` +
-      sec.hotspots.map((h) => h.rects.map(([x, y, w, hh]) =>
+      sec.hotspots.map((h) => h.button
+        ? `<button type="button" class="hs hs-btn" data-hs="${h.id}" style="left:${h.button.x}%;top:${h.button.y}%"><span class="hs-btn-ico" aria-hidden="true"></span>${h.button.label}</button>`
+        : h.rects.map(([x, y, w, hh]) =>
         `<button type="button" class="hs" data-hs="${h.id}" aria-label="${h.title}" style="left:${x}%;top:${y}%;width:${w}%;height:${hh}%"></button>`).join('')).join('');
     if (!reduced) anime({ targets: stage, opacity: [0, 1], duration: 380, easing: 'easeOutQuad' });
   };

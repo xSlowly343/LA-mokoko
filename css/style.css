@@ -433,3 +433,27 @@ button.pc-img span {display: flex; align-items: center; gap: 6px; padding: 7px 1
   .lightbox.zoomed .lb-img {width: 160%;}
 }
 .lightbox.zoomable p {flex: none;}
+
+/* =========================================================
+   Временная кнопка «Гравировки» поверх скриншота снаряжения
+   (позже заменим на настоящую кнопку из игры)
+   ========================================================= */
+.hs.hs-btn {
+  translate: -50% 0; display: inline-flex; align-items: center; gap: .5em; white-space: nowrap;
+  padding: .45em 1em .45em .6em; border-radius: 6px;
+  font: 700 clamp(10px, 1.05vw, 14px)/1.1 var(--font-body); letter-spacing: .02em; color: #ffe2a6;
+  background: linear-gradient(180deg, rgba(62, 46, 22, .95), rgba(28, 22, 14, .95));
+  border: 1px solid rgba(255, 182, 46, .75);
+  box-shadow: inset 0 1px 0 rgba(255, 230, 170, .25), 0 0 0 1px rgba(0, 0, 0, .6), 0 4px 14px rgba(0, 0, 0, .55);
+  animation: hs-btn-glow 2.4s ease-in-out infinite;
+}
+.hs-btn-ico {
+  width: 1.5em; height: 1.5em; flex: none; border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #ffd27a 0 18%, #ff8a1e 19% 34%, transparent 35%), radial-gradient(circle, #2b1d0c 0 60%, #ffb62e 61% 68%, #3a2810 69%);
+  box-shadow: 0 0 6px rgba(255, 138, 30, .7);
+}
+.hs.hs-btn:hover, .hs.hs-btn.hover { color: #17171d; background: linear-gradient(180deg, #ffd27a, var(--accent)); border-color: #ffe2a6; }
+.hs.hs-btn.on { color: #17171d; background: linear-gradient(180deg, #ffd27a, var(--accent)); border: 1px solid #fff; animation: none; box-shadow: 0 0 0 2px rgba(23,23,29,.6), 0 0 22px rgba(255, 182, 46, .7); }
+@keyframes hs-btn-glow { 0%, 100% { box-shadow: inset 0 1px 0 rgba(255,230,170,.25), 0 0 0 1px rgba(0,0,0,.6), 0 4px 14px rgba(0,0,0,.55); } 50% { box-shadow: inset 0 1px 0 rgba(255,230,170,.25), 0 0 0 1px rgba(0,0,0,.6), 0 0 18px rgba(255,182,46,.55); } }
+.g-go { all: unset; cursor: pointer; display: inline-block; margin-top: 6px; padding: 9px 16px; border-radius: 8px; font-weight: 700; font-size: 14px; color: #17171d; background: var(--accent); transition: filter .2s; }
+.g-go:hover, .g-go:focus-visible { filter: brightness(1.1); }
