@@ -103,7 +103,7 @@ body[data-page="home"] main { max-width: none; padding: 0; }
 .l-why { padding: 75px 24px; text-align: center; scroll-margin-top: var(--top); }
 .l-why-label { color: var(--accent); font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 18px; }
 .l-why p { max-width: 920px; margin: 0 auto 1em; font-size: 24px; line-height: 1.5; }
-.l-why .l-heart { margin: 0; color: var(--accent); }
+.l-why .l-heart { margin: 0 auto; color: var(--accent); }
 
 /* ===== Системы: вкладки + картинка с зонами + текст ===== */
 .l-sys {
