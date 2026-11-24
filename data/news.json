@@ -2,6 +2,17 @@
  "source": "https://lostark.ru/",
  "items": [
   {
+   "id": 2705,
+   "url": "https://lostark.ru/news/2705-tehnicheskie-raboty-v-lost-ark-344",
+   "title": "Технические работы в LOST ARK",
+   "lead": "25 ноября с 05:59 до 15:00 мск в LOST ARK пройдут плановые технические работы.",
+   "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/0ac43ab06a60d81cceac9075754bdf59.jpg",
+   "category": "Изменения",
+   "date": "2026-11-24",
+   "firstSeen": "2026-11-24T21:11:55+00:00",
+   "imageLocal": "assets/news/2705.jpg"
+  },
+  {
    "id": 2703,
    "url": "https://lostark.ru/news/2703-sobytie-schastlivye-chasy-34",
    "title": "Событие «Счастливые часы»",
@@ -228,5 +239,5 @@
    "firstSeen": "2026-11-20T00:00:00+00:00"
   }
  ],
- "checked": "2026-11-20T09:10:17+00:00"
+ "checked": "2026-11-24T21:11:55+00:00"
 }
