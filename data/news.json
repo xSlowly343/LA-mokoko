@@ -9,7 +9,8 @@
    "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/e804daea922fadbfd35c46a42e55ad60.jpg",
    "category": "Изменения",
    "date": "2026-11-25",
-   "firstSeen": "2026-11-25T11:38:45+00:00"
+   "firstSeen": "2026-11-25T11:38:45+00:00",
+   "imageLocal": "assets/news/2707.jpg"
   },
   {
    "id": 2706,
@@ -19,7 +20,8 @@
    "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/21fd63809736895add03027b69f92190.jpg",
    "category": "Изменения",
    "date": "2026-11-25",
-   "firstSeen": "2026-11-25T11:38:45+00:00"
+   "firstSeen": "2026-11-25T11:38:45+00:00",
+   "imageLocal": "assets/news/2706.jpg"
   },
   {
    "id": 2705,
@@ -259,5 +261,5 @@
    "firstSeen": "2026-11-20T00:00:00+00:00"
   }
  ],
- "checked": "2026-11-25T11:38:45+00:00"
+ "checked": "2026-11-25T21:58:24+00:00"
 }
