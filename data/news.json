@@ -2,6 +2,26 @@
  "source": "https://lostark.ru/",
  "items": [
   {
+   "id": 2707,
+   "url": "https://lostark.ru/news/2707-obnovlenie-igrovogo-magazina-25-noyabrya",
+   "title": "Обновление игрового магазина [25 ноября]",
+   "lead": "Ассортимент игрового магазина обновлен — не пропустите новые предложения!",
+   "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/e804daea922fadbfd35c46a42e55ad60.jpg",
+   "category": "Изменения",
+   "date": "2026-11-25",
+   "firstSeen": "2026-11-25T11:38:45+00:00"
+  },
+  {
+   "id": 2706,
+   "url": "https://lostark.ru/news/2706-rezultaty-planovyh-tehnicheskih-rabot-25-11-2026",
+   "title": "Результаты плановых технических работ 25.11.2026",
+   "lead": "Плановые технические работы завершены.",
+   "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/21fd63809736895add03027b69f92190.jpg",
+   "category": "Изменения",
+   "date": "2026-11-25",
+   "firstSeen": "2026-11-25T11:38:45+00:00"
+  },
+  {
    "id": 2705,
    "url": "https://lostark.ru/news/2705-tehnicheskie-raboty-v-lost-ark-344",
    "title": "Технические работы в LOST ARK",
@@ -239,5 +259,5 @@
    "firstSeen": "2026-11-20T00:00:00+00:00"
   }
  ],
- "checked": "2026-11-24T21:11:55+00:00"
+ "checked": "2026-11-25T11:38:45+00:00"
 }
