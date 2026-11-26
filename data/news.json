@@ -2,6 +2,17 @@
  "source": "https://lostark.ru/",
  "items": [
   {
+   "id": 2708,
+   "url": "https://lostark.ru/news/2708-sunduk-chernaya-pyatnica-v-markete-vk-play",
+   "title": "Сундук «Черная пятница» в Маркете VK Play",
+   "lead": "Ознакомьтесь с составом и узнайте подробнее, как воспользоваться предложением и получить товар.",
+   "image": "https://static.vkplay.ru/chronos-public-ru-la-prod/site/news/ru/36126479d7c5bd6ba30f35311e9b2486.jpg",
+   "category": "Акции",
+   "date": "2026-11-26",
+   "firstSeen": "2026-11-26T14:04:17+00:00",
+   "imageLocal": "assets/news/2708.jpg"
+  },
+  {
    "id": 2707,
    "url": "https://lostark.ru/news/2707-obnovlenie-igrovogo-magazina-25-noyabrya",
    "title": "Обновление игрового магазина [25 ноября]",
@@ -261,5 +272,5 @@
    "firstSeen": "2026-11-20T00:00:00+00:00"
   }
  ],
- "checked": "2026-11-25T21:58:24+00:00"
+ "checked": "2026-11-26T14:04:17+00:00"
 }
